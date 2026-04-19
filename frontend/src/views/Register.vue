@@ -38,7 +38,7 @@ const form = ref({
 const handleRegister = async () => {
   try {
     const response = await authAPI.register(form.value)
-    if (response.success) {
+    if (response.data.success) {
       alert('注册成功，请登录')
       router.push('/login')
     }

@@ -96,12 +96,12 @@ onMounted(async () => {
       userAPI.stats()
     ])
     
-    if (userRes.success) {
-      user.value = userRes.user
+    if (userRes.data.success) {
+      user.value = userRes.data.user
     }
     
-    if (statsRes.success) {
-      stats.value = statsRes.stats
+    if (statsRes.data.success) {
+      stats.value = statsRes.data.stats
     }
   } catch (error) {
     console.error('获取数据失败', error)

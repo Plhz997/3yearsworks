@@ -9,6 +9,7 @@
         <div class="vocab-estimate">
           <div class="vocab-count">{{ estimatedVocabulary }}</div>
           <div class="vocab-label">预估词汇量</div>
+          <div class="vocab-range">约 {{ vocabularyRange.low }} - {{ vocabularyRange.high }} 词</div>
         </div>
       </div>
       
@@ -75,21 +76,73 @@ const result = ref({
 })
 
 const estimatedVocabulary = computed(() => {
-  const accuracy = result.value.analysis.overall.accuracy
+  const analysis = result.value.analysis
   const level = result.value.estimated_level
   
-  const baseVocab = {
-    1: 800,
-    2: 1500,
-    3: 3000
+  const levelRanges = {
+    1: { min: 600, max: 1200, name: '小学' },
+    2: { min: 1200, max: 2500, name: '初中' },
+    3: { min: 2500, max: 4500, name: '高中' }
   }
   
-  const base = baseVocab[level] || 1500
-  const range = base * 0.4
+  const range = levelRanges[level] || levelRanges[2]
   
-  const vocab = Math.round(base + (accuracy - 0.5) * range * 2)
+  const accuracy = analysis.overall.accuracy
+  const totalQuestions = analysis.overall.total
   
-  return Math.max(200, vocab).toLocaleString()
+  let weightedScore = 0
+  let totalWeight = 0
+  
+  const questionTypeWeights = {
+    'spelling': 1.5,
+    'choice_en': 1.0,
+    'choice_zh': 1.0,
+    'recognition': 0.8
+  }
+  
+  if (analysis.level_analysis) {
+    Object.entries(analysis.level_analysis).forEach(([levelName, stats]) => {
+      const levelWeight = levelName === '小学' ? 0.8 : levelName === '初中' ? 1.0 : 1.3
+      const typeWeight = questionTypeWeights[stats.question_type] || 1.0
+      const weight = levelWeight * typeWeight * stats.total
+      weightedScore += stats.correct * levelWeight * typeWeight
+      totalWeight += weight
+    })
+  }
+  
+  const weightedAccuracy = totalWeight > 0 ? weightedScore / totalWeight : accuracy
+  
+  const normalizedAccuracy = Math.pow(weightedAccuracy, 1.2)
+  
+  const vocabEstimate = Math.round(
+    range.min + (range.max - range.min) * normalizedAccuracy
+  )
+  
+  const minVocab = Math.max(200, range.min * 0.5)
+  const maxVocab = range.max * 1.2
+  
+  return Math.max(minVocab, Math.min(maxVocab, vocabEstimate)).toLocaleString()
+})
+
+const vocabularyRange = computed(() => {
+  const level = result.value.estimated_level
+  const accuracy = result.value.analysis.overall.accuracy
+  
+  const levelRanges = {
+    1: { min: 600, max: 1200 },
+    2: { min: 1200, max: 2500 },
+    3: { min: 2500, max: 4500 }
+  }
+  
+  const range = levelRanges[level] || levelRanges[2]
+  
+  const margin = Math.round((range.max - range.min) * 0.15)
+  const vocab = parseInt(estimatedVocabulary.value.replace(/,/g, ''))
+  
+  return {
+    low: Math.max(range.min * 0.5, vocab - margin).toLocaleString(),
+    high: Math.min(range.max * 1.2, vocab + margin).toLocaleString()
+  }
 })
 
 const suggestions = computed(() => {
@@ -211,6 +264,15 @@ const retest = () => {
 .vocab-label {
   font-size: 14px;
   opacity: 0.9;
+}
+
+.vocab-range {
+  font-size: 10px;
+  opacity: 0.85;
+  margin-top: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 10px;
 }
 
 .result-info {

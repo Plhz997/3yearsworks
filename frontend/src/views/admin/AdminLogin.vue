@@ -33,9 +33,9 @@ const form = ref({
 const handleLogin = async () => {
   try {
     const response = await authAPI.adminLogin(form.value)
-    if (response.success) {
-      localStorage.setItem('access_token', response.access_token)
-      localStorage.setItem('admin', JSON.stringify(response.admin))
+    if (response.data.success) {
+      localStorage.setItem('access_token', response.data.access_token)
+      localStorage.setItem('admin', JSON.stringify(response.data.admin))
       router.push('/admin')
     }
   } catch (error) {

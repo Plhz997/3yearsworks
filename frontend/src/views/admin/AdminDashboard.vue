@@ -113,8 +113,8 @@ onMounted(async () => {
   
   try {
     const response = await adminAPI.stats()
-    if (response.success) {
-      stats.value = response.stats
+    if (response.data.success) {
+      stats.value = response.data.stats
     }
   } catch (error) {
     console.error('获取统计失败', error)

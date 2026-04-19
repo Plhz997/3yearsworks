@@ -95,8 +95,8 @@ const startTest = async () => {
       response = await testAPI.start({ level: selectedLevel.value, mode: 'basic' })
     }
     
-    if (response.success) {
-      localStorage.setItem('questions', JSON.stringify(response.questions))
+    if (response.data.success) {
+      localStorage.setItem('questions', JSON.stringify(response.data.questions))
       router.push('/test')
     }
   } catch (error) {

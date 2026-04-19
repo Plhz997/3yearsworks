@@ -1,23 +1,20 @@
 <template>
-  <div class="app-container">
-    <router-view v-if="currentPage !== 'admin'"></router-view>
-    <AdminLayout v-else-if="currentPage.startsWith('admin')"></AdminLayout>
-  </div>
+  <router-view />
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import ElementPlus from 'element-plus'
-import router from './router'
-
-const currentPage = ref('home')
-
-onMounted(() => {
-  const path = window.location.pathname
-  if (path.startsWith('/admin')) {
-    currentPage.value = 'admin'
-  } else {
-    currentPage.value = path.replace('/', '') || 'home'
-  }
-})
 </script>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+</style>

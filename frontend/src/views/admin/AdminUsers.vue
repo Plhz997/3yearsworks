@@ -88,9 +88,9 @@ const loadUsers = async () => {
       page: currentPage.value,
       per_page: 20
     })
-    if (response.success) {
-      users.value = response.data
-      totalPages.value = Math.ceil(response.total / 20)
+    if (response.data.success) {
+      users.value = response.data.data
+      totalPages.value = Math.ceil(response.data.total / 20)
     }
   } catch (error) {
     console.error('获取用户失败', error)
@@ -116,7 +116,7 @@ const deleteUser = async (id) => {
   
   try {
     const response = await adminAPI.deleteUser(id)
-    if (response.success) {
+    if (response.data.success) {
       loadUsers()
     }
   } catch (error) {

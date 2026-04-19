@@ -34,9 +34,9 @@ const form = ref({
 const handleLogin = async () => {
   try {
     const response = await authAPI.login(form.value)
-    if (response.success) {
-      localStorage.setItem('access_token', response.access_token)
-      localStorage.setItem('user', JSON.stringify(response.user))
+    if (response.data.success) {
+      localStorage.setItem('access_token', response.data.access_token)
+      localStorage.setItem('user', JSON.stringify(response.data.user))
       router.push('/')
     }
   } catch (error) {

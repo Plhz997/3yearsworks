@@ -50,8 +50,8 @@ onMounted(async () => {
   
   try {
     const response = await userAPI.wrongWords()
-    if (response.success) {
-      wrongWords.value = response.data
+    if (response.data.success) {
+      wrongWords.value = response.data.data
     }
   } catch (error) {
     console.error('获取错题失败', error)
@@ -72,7 +72,7 @@ const removeWord = async (wordId) => {
   
   try {
     const response = await userAPI.removeWrongWord(wordId)
-    if (response.success) {
+    if (response.data.success) {
       wrongWords.value = wrongWords.value.filter(w => w.id !== wordId)
     }
   } catch (error) {

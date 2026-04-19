@@ -71,8 +71,8 @@ onMounted(() => {
 const loadRecords = async () => {
   try {
     const response = await adminAPI.stats()
-    if (response.success) {
-      records.value = response.stats.recent_tests
+    if (response.data.success) {
+      records.value = response.data.stats.recent_tests
     }
   } catch (error) {
     console.error('获取记录失败', error)

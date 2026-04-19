@@ -147,8 +147,8 @@ const loadVocab = async () => {
     if (searchKeyword.value) params.keyword = searchKeyword.value
     
     const response = await vocabAPI.list(params)
-    if (response.success) {
-      vocabList.value = response.data
+    if (response.data.success) {
+      vocabList.value = response.data.data
     }
   } catch (error) {
     console.error('获取词库失败', error)
@@ -179,7 +179,7 @@ const deleteWord = async (id) => {
   
   try {
     const response = await vocabAPI.delete(id)
-    if (response.success) {
+    if (response.data.success) {
       loadVocab()
     }
   } catch (error) {

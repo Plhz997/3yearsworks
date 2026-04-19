@@ -90,8 +90,8 @@ onMounted(async () => {
   
   try {
     const response = await testAPI.records()
-    if (response.success) {
-      records.value = response.records
+    if (response.data.success) {
+      records.value = response.data.records
     }
   } catch (error) {
     console.error('获取记录失败', error)
@@ -113,9 +113,9 @@ const goTest = () => {
 
 const viewDetail = async (id) => {
   try {
-    const response = await testAPI.recordDetail(id)
-    if (response.success) {
-      detailData.value = response
+    const response = await testAPI.record(id)
+    if (response.data.success) {
+      detailData.value = response.data
       showDetail.value = true
     }
   } catch (error) {

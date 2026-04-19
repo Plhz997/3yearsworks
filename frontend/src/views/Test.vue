@@ -200,8 +200,8 @@ const submitTest = async () => {
       level: level
     })
     
-    if (response.success) {
-      localStorage.setItem('test_result', JSON.stringify(response))
+    if (response.data.success) {
+      localStorage.setItem('test_result', JSON.stringify(response.data))
       localStorage.removeItem('questions')
       localStorage.removeItem('test_level')
       router.push('/test/result')
