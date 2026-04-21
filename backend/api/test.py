@@ -61,14 +61,38 @@ def submit_test():
     estimated_level = algorithm.estimate_level(results)
     
     user_id = None
-    identity = None
-    try:
-        from flask_jwt_extended import get_jwt_identity
-        identity = get_jwt_identity()
-        if identity and identity.get('type') == 'user':
-            user_id = identity['user_id']
-    except:
-        pass
+    
+    auth_header = request.headers.get('Authorization', '')
+    print(f"Authorization header: {auth_header}")
+    
+    if auth_header.startswith('Bearer '):
+        token = auth_header.split(' ')[1]
+        try:
+            import jwt
+            import json
+            from config.config import Config
+            decoded = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=['HS256'], options={"verify_sub": False})
+            print(f"Decoded token: {decoded}")
+            
+            if decoded.get('sub'):
+                sub = decoded['sub']
+                if isinstance(sub, str):
+                    try:
+                        sub = json.loads(sub)
+                    except:
+                        pass
+                if isinstance(sub, dict):
+                    if sub.get('type') == 'user':
+                        user_id = sub.get('user_id')
+            
+            if not user_id and decoded.get('user_id'):
+                user_id = decoded['user_id']
+            
+            print(f"Parsed user_id: {user_id}")
+        except Exception as e:
+            print(f"Failed to parse token: {e}")
+    
+    print(f"Submit test - user_id: {user_id}, level: {level}, results count: {len(results)}")
     
     record = TestRecord(
         user_id=user_id,
@@ -114,27 +138,84 @@ def submit_test():
     }), 200
 
 @test_bp.route('/records', methods=['GET'])
-@jwt_required()
 def get_records():
-    identity = get_jwt_identity()
-    if identity.get('type') != 'user':
-        return jsonify({'success': False, 'message': '需要登录'}), 401
+    user_id = None
     
-    user_id = identity['user_id']
+    auth_header = request.headers.get('Authorization', '')
+    print(f"Get records - Authorization header: {auth_header}")
+    
+    if auth_header.startswith('Bearer '):
+        token = auth_header.split(' ')[1]
+        try:
+            import jwt
+            import json
+            from config.config import Config
+            decoded = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=['HS256'], options={"verify_sub": False})
+            print(f"Decoded token: {decoded}")
+            
+            if decoded.get('sub'):
+                sub = decoded['sub']
+                if isinstance(sub, str):
+                    try:
+                        sub = json.loads(sub)
+                    except:
+                        pass
+                if isinstance(sub, dict):
+                    if sub.get('type') == 'user':
+                        user_id = sub.get('user_id')
+            
+            if not user_id and decoded.get('user_id'):
+                user_id = decoded['user_id']
+            
+            print(f"Parsed user_id: {user_id}")
+        except Exception as e:
+            print(f"Failed to parse token: {e}")
+    
+    if not user_id:
+        return jsonify({'success': True, 'records': []}), 200
+    
     records = TestRecord.query.filter_by(user_id=user_id).order_by(TestRecord.created_at.desc()).all()
     
     return jsonify({'success': True, 'records': [r.to_dict() for r in records]}), 200
 
 @test_bp.route('/record/<int:record_id>', methods=['GET'])
-@jwt_required()
 def get_record_detail(record_id):
-    identity = get_jwt_identity()
-    if identity.get('type') != 'user':
+    user_id = None
+    
+    auth_header = request.headers.get('Authorization', '')
+    if auth_header.startswith('Bearer '):
+        token = auth_header.split(' ')[1]
+        try:
+            import jwt
+            import json
+            from config.config import Config
+            decoded = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=['HS256'], options={"verify_sub": False})
+            
+            if decoded.get('sub'):
+                sub = decoded['sub']
+                if isinstance(sub, str):
+                    try:
+                        sub = json.loads(sub)
+                    except:
+                        pass
+                if isinstance(sub, dict):
+                    if sub.get('type') == 'user':
+                        user_id = sub.get('user_id')
+            
+            if not user_id and decoded.get('user_id'):
+                user_id = decoded['user_id']
+        except Exception as e:
+            print(f"Failed to parse token: {e}")
+    
+    if not user_id:
         return jsonify({'success': False, 'message': '需要登录'}), 401
     
     record = TestRecord.query.get(record_id)
     if not record:
         return jsonify({'success': False, 'message': '记录不存在'}), 404
+    
+    if record.user_id != user_id:
+        return jsonify({'success': False, 'message': '无权访问此记录'}), 403
     
     details = TestDetail.query.filter_by(record_id=record_id).all()
     

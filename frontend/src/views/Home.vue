@@ -8,6 +8,7 @@
       <nav class="nav">
         <button v-if="!isLoggedIn" @click="goTo('/login')" class="nav-btn">登录</button>
         <button v-if="!isLoggedIn" @click="goTo('/register')" class="nav-btn">注册</button>
+        <button v-if="isLoggedIn" @click="goTo('/wrong-words')" class="nav-btn">错题本</button>
         <button v-if="isLoggedIn" @click="goTo('/profile')" class="nav-btn">{{ user?.username }}</button>
         <button v-if="isLoggedIn" @click="logout" class="nav-btn">退出</button>
         <button @click="goTo('/admin/login')" class="nav-btn admin-btn">管理后台</button>
@@ -39,7 +40,7 @@
             <h4>数据分析</h4>
             <p>详细的测评报告和学习进度分析</p>
           </div>
-          <div class="feature-card">
+          <div class="feature-card clickable" @click="goTo('/wrong-words')">
             <div class="icon">📖</div>
             <h4>错题本</h4>
             <p>自动记录错题，支持重复练习</p>
@@ -262,6 +263,14 @@ const selectLevel = (level) => {
 .feature-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card.clickable {
+  cursor: pointer;
+}
+
+.feature-card.clickable:hover {
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8eaf6 100%);
 }
 
 .icon {

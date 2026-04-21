@@ -36,19 +36,24 @@
       
       <div class="chart-section">
         <h3>词库分级统计</h3>
-        <div id="levelChart" style="height: 300px;"></div>
-      </div>
-      
-      <div class="chart-section">
-        <h3>测评等级分布</h3>
-        <div id="levelDistChart" style="height: 300px;"></div>
+        <div class="level-stats">
+          <div class="level-item">
+            <div class="level-bar" style="background: #4caf50; width: {{ (stats.level_distribution[1] / (stats.vocab_count || 1) * 100) }}%">小学 {{ stats.level_distribution[1] || 0 }}</div>
+          </div>
+          <div class="level-item">
+            <div class="level-bar" style="background: #ff9800; width: {{ (stats.level_distribution[2] / (stats.vocab_count || 1) * 100) }}%">初中 {{ stats.level_distribution[2] || 0 }}</div>
+          </div>
+          <div class="level-item">
+            <div class="level-bar" style="background: #f44336; width: {{ (stats.level_distribution[3] / (stats.vocab_count || 1) * 100) }}%">高中 {{ stats.level_distribution[3] || 0 }}</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { adminAPI } from '../../utils/api'
 
@@ -62,73 +67,15 @@ const stats = ref({
 })
 
 onMounted(async () => {
-  if (!localStorage.getItem('access_token')) {
-    router.push('/admin/login')
-    return
-  }
-  
   try {
     const response = await adminAPI.stats()
     if (response.data.success) {
       stats.value = response.data.stats
-      await nextTick()
-      initCharts()
     }
   } catch (error) {
     console.error('获取统计失败', error)
   }
 })
-
-const initCharts = () => {
-  const levelChart = echarts.init(document.getElementById('levelChart'))
-  const levelDistChart = echarts.init(document.getElementById('levelDistChart'))
-  
-  const levelData = [
-    { value: stats.value.level_distribution[1] || 0, name: '小学' },
-    { value: stats.value.level_distribution[2] || 0, name: '初中' },
-    { value: stats.value.level_distribution[3] || 0, name: '高中' }
-  ]
-  
-  levelChart.setOption({
-    title: { text: '词库分级' },
-    tooltip: { trigger: 'item' },
-    legend: { orient: 'horizontal', bottom: 10 },
-    series: [{
-      type: 'pie',
-      radius: ['40%', '70%'],
-      avoidLabelOverlap: false,
-      itemStyle: { borderRadius: 10 },
-      label: { show: true },
-      data: levelData
-    }]
-  })
-  
-  const levelCounts = { 1: 0, 2: 0, 3: 0 }
-  if (stats.value.recent_tests) {
-    stats.value.recent_tests.forEach(record => {
-      levelCounts[record.estimated_level] = (levelCounts[record.estimated_level] || 0) + 1
-    })
-  }
-  
-  levelDistChart.setOption({
-    title: { text: '预估水平分布' },
-    tooltip: {},
-    xAxis: { data: ['小学', '初中', '高中'] },
-    yAxis: { type: 'value' },
-    series: [{
-      type: 'bar',
-      data: [levelCounts[1], levelCounts[2], levelCounts[3]],
-      itemStyle: {
-        color: ['#4caf50', '#ff9800', '#f44336']
-      }
-    }]
-  })
-  
-  window.addEventListener('resize', () => {
-    levelChart.resize()
-    levelDistChart.resize()
-  })
-}
 
 const goTo = (path) => {
   router.push(path)
@@ -257,5 +204,26 @@ const logout = () => {
   font-size: 18px;
   color: #333;
   margin-bottom: 20px;
+}
+
+.level-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.level-item {
+  height: 32px;
+}
+
+.level-bar {
+  height: 100%;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  color: white;
+  font-weight: 600;
+  transition: width 0.5s ease;
 }
 </style>

@@ -26,7 +26,7 @@ export const authAPI = {
   login: (data) => instance.post('/auth/login', data),
   register: (data) => instance.post('/auth/register', data),
   profile: () => instance.get('/auth/profile'),
-  adminLogin: (data) => instance.post('/auth/admin/login'),
+  adminLogin: (data) => instance.post('/auth/admin/login', data),
 }
 
 export const testAPI = {

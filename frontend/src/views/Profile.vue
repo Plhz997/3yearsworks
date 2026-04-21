@@ -113,6 +113,7 @@ const goBack = () => {
 }
 
 const goTo = (path) => {
+  console.log('Navigating to:', path)
   router.push(path)
 }
 

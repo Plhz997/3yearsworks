@@ -9,13 +9,37 @@ from app import db
 user_bp = Blueprint('user', __name__)
 
 @user_bp.route('/wrong_words', methods=['GET'])
-@jwt_required()
 def get_wrong_words():
-    identity = get_jwt_identity()
-    if identity.get('type') != 'user':
-        return jsonify({'success': False, 'message': '需要登录'}), 401
+    user_id = None
     
-    user_id = identity['user_id']
+    auth_header = request.headers.get('Authorization', '')
+    if auth_header.startswith('Bearer '):
+        token = auth_header.split(' ')[1]
+        try:
+            import jwt
+            import json
+            from config.config import Config
+            decoded = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=['HS256'], options={"verify_sub": False})
+            
+            if decoded.get('sub'):
+                sub = decoded['sub']
+                if isinstance(sub, str):
+                    try:
+                        sub = json.loads(sub)
+                    except:
+                        pass
+                if isinstance(sub, dict):
+                    if sub.get('type') == 'user':
+                        user_id = sub.get('user_id')
+            
+            if not user_id and decoded.get('user_id'):
+                user_id = decoded['user_id']
+        except Exception as e:
+            print(f"Failed to parse token: {e}")
+    
+    if not user_id:
+        return jsonify({'success': True, 'data': []}), 200
+    
     wrong_words = WrongWord.query.filter_by(user_id=user_id).order_by(WrongWord.last_wrong_time.desc()).all()
     
     result = []
@@ -109,13 +133,42 @@ def remove_favorite(word_id):
     return jsonify({'success': True, 'message': '已取消收藏'}), 200
 
 @user_bp.route('/stats', methods=['GET'])
-@jwt_required()
 def get_user_stats():
-    identity = get_jwt_identity()
-    if identity.get('type') != 'user':
-        return jsonify({'success': False, 'message': '需要登录'}), 401
+    user_id = None
     
-    user_id = identity['user_id']
+    auth_header = request.headers.get('Authorization', '')
+    if auth_header.startswith('Bearer '):
+        token = auth_header.split(' ')[1]
+        try:
+            import jwt
+            import json
+            from config.config import Config
+            decoded = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=['HS256'], options={"verify_sub": False})
+            
+            if decoded.get('sub'):
+                sub = decoded['sub']
+                if isinstance(sub, str):
+                    try:
+                        sub = json.loads(sub)
+                    except:
+                        pass
+                if isinstance(sub, dict):
+                    if sub.get('type') == 'user':
+                        user_id = sub.get('user_id')
+            
+            if not user_id and decoded.get('user_id'):
+                user_id = decoded['user_id']
+        except Exception as e:
+            print(f"Failed to parse token: {e}")
+    
+    if not user_id:
+        return jsonify({'success': True, 'stats': {
+            'total_tests': 0,
+            'avg_accuracy': 0,
+            'last_test_date': None,
+            'level_distribution': {}
+        }}), 200
+    
     records = TestRecord.query.filter_by(user_id=user_id).all()
     
     if not records:

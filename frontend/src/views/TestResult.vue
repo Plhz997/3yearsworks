@@ -77,51 +77,39 @@ const result = ref({
 
 const estimatedVocabulary = computed(() => {
   const analysis = result.value.analysis
-  const level = result.value.estimated_level
   
-  const levelRanges = {
-    1: { min: 600, max: 1200, name: '小学' },
-    2: { min: 1200, max: 2500, name: '初中' },
-    3: { min: 2500, max: 4500, name: '高中' }
+  const levelVocabBase = {
+    '小学': 800,
+    '初中': 1500,
+    '高中': 2500
   }
   
-  const range = levelRanges[level] || levelRanges[2]
-  
-  const accuracy = analysis.overall.accuracy
-  const totalQuestions = analysis.overall.total
-  
-  let weightedScore = 0
-  let totalWeight = 0
-  
-  const questionTypeWeights = {
-    'spelling': 1.5,
-    'choice_en': 1.0,
-    'choice_zh': 1.0,
-    'recognition': 0.8
+  const levelVocabAdditional = {
+    '小学': 400,
+    '初中': 1000,
+    '高中': 2000
   }
+  
+  let totalVocab = 0
   
   if (analysis.level_analysis) {
     Object.entries(analysis.level_analysis).forEach(([levelName, stats]) => {
-      const levelWeight = levelName === '小学' ? 0.8 : levelName === '初中' ? 1.0 : 1.3
-      const typeWeight = questionTypeWeights[stats.question_type] || 1.0
-      const weight = levelWeight * typeWeight * stats.total
-      weightedScore += stats.correct * levelWeight * typeWeight
-      totalWeight += weight
+      const baseVocab = levelVocabBase[levelName] || 1000
+      const additionalVocab = levelVocabAdditional[levelName] || 500
+      const accuracy = stats.correct / stats.total
+      
+      const masteredVocab = Math.round(baseVocab + additionalVocab * accuracy)
+      totalVocab += masteredVocab
     })
+  } else {
+    const accuracy = analysis.overall.accuracy
+    totalVocab = Math.round(2000 * accuracy + 500)
   }
   
-  const weightedAccuracy = totalWeight > 0 ? weightedScore / totalWeight : accuracy
+  const minVocab = 200
+  const maxVocab = 5000
   
-  const normalizedAccuracy = Math.pow(weightedAccuracy, 1.2)
-  
-  const vocabEstimate = Math.round(
-    range.min + (range.max - range.min) * normalizedAccuracy
-  )
-  
-  const minVocab = Math.max(200, range.min * 0.5)
-  const maxVocab = range.max * 1.2
-  
-  return Math.max(minVocab, Math.min(maxVocab, vocabEstimate)).toLocaleString()
+  return Math.max(minVocab, Math.min(maxVocab, totalVocab)).toLocaleString()
 })
 
 const vocabularyRange = computed(() => {
