@@ -35,7 +35,7 @@
       </div>
       
       <div class="chart-section">
-        <h3>词库分级统计</h3>
+http://192.168.1.127:5173/        <h3>词库分级统计</h3>
         <div class="level-stats">
           <div class="level-item">
             <div class="level-bar" style="background: #4caf50; width: {{ (stats.level_distribution[1] / (stats.vocab_count || 1) * 100) }}%">小学 {{ stats.level_distribution[1] || 0 }}</div>
