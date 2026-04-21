@@ -52,6 +52,7 @@
         
         <div v-if="showResult" class="result-hint">
           <span v-if="isCorrect" class="correct-hint">✓ 回答正确！</span>
+          <span v-else-if="currentQuestion.question_type === 'recognition' && userAnswer === 'no'" class="unknown-hint">🔍 这个单词的意思是：{{ currentQuestion.meaning }}</span>
           <span v-else class="wrong-hint">✗ 回答错误，正确答案是：{{ getCorrectAnswer() }}</span>
         </div>
       </div>
@@ -409,6 +410,10 @@ const submitTest = async () => {
 
 .wrong-hint {
   color: #f44336;
+}
+
+.unknown-hint {
+  color: #2196f3;
 }
 
 .question-footer {
