@@ -4,6 +4,8 @@ const protocol = window.location.protocol
 const hostname = window.location.hostname
 const baseURL = `${protocol}//${hostname}:8081/api`
 
+console.log(`API base URL: ${baseURL}`)
+
 const instance = axios.create({
   baseURL: baseURL,
   timeout: 10000,

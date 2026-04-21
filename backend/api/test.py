@@ -30,16 +30,46 @@ def start_test():
     return jsonify({'success': True, 'questions': questions}), 200
 
 @test_bp.route('/start/smart', methods=['POST'])
-@jwt_required()
 def start_smart_test():
-    identity = get_jwt_identity()
-    if identity.get('type') != 'user':
+    user_id = None
+    
+    auth_header = request.headers.get('Authorization', '')
+    print(f"Authorization header: {auth_header}")
+    
+    if auth_header.startswith('Bearer '):
+        token = auth_header.split(' ')[1]
+        try:
+            import jwt
+            import json
+            from config.config import Config
+            decoded = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=['HS256'], options={"verify_sub": False})
+            print(f"Decoded token: {decoded}")
+            
+            if decoded.get('sub'):
+                sub = decoded['sub']
+                if isinstance(sub, str):
+                    try:
+                        sub = json.loads(sub)
+                    except:
+                        pass
+                if isinstance(sub, dict):
+                    if sub.get('type') == 'user':
+                        user_id = sub.get('user_id')
+        
+            if not user_id and decoded.get('user_id'):
+                user_id = decoded['user_id']
+            
+            print(f"Parsed user_id: {user_id}")
+        except Exception as e:
+            print(f"Failed to parse token: {e}")
+    
+    if not user_id:
         return jsonify({'success': False, 'message': '需要登录'}), 401
     
     data = request.get_json()
     level = data.get('level', 2)
     
-    algorithm = SmartTestAlgorithm(db.session, identity['user_id'])
+    algorithm = SmartTestAlgorithm(db.session, user_id)
     words = algorithm.get_personalized_words(level, 20)
     questions = []
     
