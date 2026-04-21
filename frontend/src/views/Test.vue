@@ -52,6 +52,7 @@
         
         <div v-if="showResult" class="result-hint">
           <span v-if="isCorrect" class="correct-hint">✓ 回答正确！</span>
+          <span v-else-if="userAnswer === 'unknown'" class="unknown-hint">🔍 这个单词的意思是：{{ currentQuestion.meaning }}</span>
           <span v-else-if="currentQuestion.question_type === 'recognition' && userAnswer === 'no'" class="unknown-hint">🔍 这个单词的意思是：{{ currentQuestion.meaning }}</span>
           <span v-else class="wrong-hint">✗ 回答错误，正确答案是：{{ getCorrectAnswer() }}</span>
         </div>
@@ -85,6 +86,8 @@ const showResult = ref(false)
 const isCorrect = ref(false)
 const results = ref([])
 const elapsedTime = ref(0)
+const consecutiveWrong = ref(0)
+const totalWrong = ref(0)
 let timer = null
 
 const progressPercent = computed(() => ((currentIndex.value + 1) / questions.value.length) * 100)
@@ -166,6 +169,13 @@ const submitAnswer = () => {
   isCorrect.value = answerCorrect
   showResult.value = true
   
+  if (!answerCorrect) {
+    consecutiveWrong.value++
+    totalWrong.value++
+  } else {
+    consecutiveWrong.value = 0
+  }
+  
   results.value.push({
     word_id: currentQuestion.value.word_id,
     word: currentQuestion.value.word,
@@ -173,7 +183,8 @@ const submitAnswer = () => {
     user_answer: userAnswer.value,
     is_correct: answerCorrect,
     question_type: currentQuestion.value.question_type,
-    level: currentQuestion.value.level
+    level: currentQuestion.value.level,
+    difficulty_level: currentQuestion.value.difficulty_level
   })
 }
 
@@ -183,6 +194,17 @@ const getCorrectAnswer = () => {
 }
 
 const nextQuestion = async () => {
+  if (consecutiveWrong.value >= 4) {
+    alert('连续答错4题，测评结束！')
+    await submitTest()
+    return
+  }
+  if (totalWrong.value >= 7) {
+    alert('累计答错7题，测评结束！')
+    await submitTest()
+    return
+  }
+  
   if (currentIndex.value < questions.value.length - 1) {
     currentIndex.value++
     userAnswer.value = ''

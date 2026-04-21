@@ -34,6 +34,7 @@ export const authAPI = {
 export const testAPI = {
   start: (data) => instance.post('/test/start', data),
   startSmart: (data) => instance.post('/test/start/smart', data),
+  startStandard: (data) => instance.post('/test/start/standard', data),
   submit: (data) => instance.post('/test/submit', data),
   records: () => instance.get('/test/records'),
   record: (id) => instance.get(`/test/record/${id}`),

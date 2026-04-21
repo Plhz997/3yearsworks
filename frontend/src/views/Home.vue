@@ -30,12 +30,12 @@
       <section class="features">
         <h3>系统功能</h3>
         <div class="feature-cards">
-          <div class="feature-card">
+          <div class="feature-card clickable" @click="goTo('/test/start')">
             <div class="icon">📝</div>
             <h4>智能测评</h4>
             <p>基于答题情况动态调整难度，精准评估词汇水平</p>
           </div>
-          <div class="feature-card">
+          <div class="feature-card clickable" @click="goTo('/history')">
             <div class="icon">📊</div>
             <h4>数据分析</h4>
             <p>详细的测评报告和学习进度分析</p>
@@ -45,7 +45,7 @@
             <h4>错题本</h4>
             <p>自动记录错题，支持重复练习</p>
           </div>
-          <div class="feature-card">
+          <div class="feature-card clickable" @click="goTo('/test/start')">
             <div class="icon">🎯</div>
             <h4>分级词库</h4>
             <p>小学、初中、高中三级词库，适合不同学段</p>

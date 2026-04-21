@@ -4,7 +4,7 @@ from models.test_record import TestRecord
 from models.test_detail import TestDetail
 from models.wrong_word import WrongWord
 from models.vocabulary import Vocabulary
-from utils.test_algorithm import TestAlgorithm, SmartTestAlgorithm
+from utils.test_algorithm import TestAlgorithm, SmartTestAlgorithm, StandardTestAlgorithm
 from app import db
 
 test_bp = Blueprint('test', __name__)
@@ -76,6 +76,18 @@ def start_smart_test():
     for word in words:
         question = algorithm.generate_question(word)
         question['level'] = word['level']
+        questions.append(question)
+    
+    return jsonify({'success': True, 'questions': questions}), 200
+
+@test_bp.route('/start/standard', methods=['POST'])
+def start_standard_test():
+    algorithm = StandardTestAlgorithm(db.session)
+    words = algorithm.get_standard_words()
+    questions = []
+    
+    for word in words:
+        question = algorithm.generate_question_with_options(word)
         questions.append(question)
     
     return jsonify({'success': True, 'questions': questions}), 200

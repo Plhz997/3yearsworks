@@ -179,6 +179,129 @@ class TestAlgorithm:
         
         return analysis
 
+class StandardTestAlgorithm(TestAlgorithm):
+    """
+    标准测评算法 - 按照指定规则出题
+    """
+    
+    LEVEL_VOCAB_BASE = {
+        (1, 1): 400,   # 小学1级
+        (1, 2): 600,   # 小学2级
+        (1, 3): 800,   # 小学3级
+        (2, 1): 1000,  # 初中1级
+        (2, 2): 1500,  # 初中2级
+        (2, 3): 2000,  # 初中3级
+        (3, 1): 2500,  # 高中1级
+        (3, 2): 3500,  # 高中2级
+        (3, 3): 4500   # 高中3级
+    }
+    
+    LEVEL_WEIGHTS = {
+        1: 1.25,
+        2: 1.1,
+        3: 1.1
+    }
+    
+    TEST_DISTRIBUTION = {
+        (1, 1): 4,
+        (1, 2): 6,
+        (1, 3): 6,
+        (2, 1): 6,
+        (2, 2): 6,
+        (2, 3): 6,
+        (3, 1): 6,
+        (3, 2): 6,
+        (3, 3): 4
+    }
+    
+    def __init__(self, db_session):
+        super().__init__(db_session)
+    
+    def get_standard_words(self):
+        words = []
+        order = [
+            (1, 1), (1, 2), (1, 3),
+            (2, 1), (2, 2), (2, 3),
+            (3, 1), (3, 2), (3, 3)
+        ]
+        
+        for (level, difficulty), count in self.TEST_DISTRIBUTION.items():
+            level_words = self.db.query(Vocabulary).filter_by(
+                level=level
+            ).order_by(func.random()).limit(count).all()
+            for w in level_words:
+                word_dict = w.to_dict()
+                word_dict['difficulty_level'] = difficulty
+                words.append(word_dict)
+        
+        return words
+    
+    def generate_question_with_options(self, word):
+        question = {
+            'word_id': word['id'],
+            'word': word['word'],
+            'meaning': word['meaning'],
+            'phonetic': word.get('phonetic', ''),
+            'level': word['level'],
+            'difficulty_level': word.get('difficulty_level', 1),
+            'question_type': 'choice_zh',
+            'options': []
+        }
+        
+        question['prompt'] = f"请选择 '{word['word']}' 的中文释义"
+        
+        wrong_words = self.db.query(Vocabulary.meaning).filter(
+            Vocabulary.id != word['id'],
+            Vocabulary.level <= word['level'] + 1,
+            Vocabulary.level >= word['level'] - 1
+        ).order_by(func.random()).limit(5).all()
+        
+        options = [{'key': word['meaning'], 'text': word['meaning'], 'correct': True}]
+        options.extend([{'key': w[0], 'text': w[0], 'correct': False} for w in wrong_words])
+        
+        random.shuffle(options)
+        options.append({'key': 'unknown', 'text': '不认识', 'correct': False})
+        
+        question['options'] = options
+        
+        return question
+    
+    def calculate_vocabulary(self, results):
+        level_stats = {}
+        for (level, diff), _ in self.TEST_DISTRIBUTION.items():
+            level_stats[(level, diff)] = {'correct': 0, 'total': 0}
+        
+        for result in results:
+            level = result.get('level', 2)
+            diff = result.get('difficulty_level', 1)
+            if (level, diff) in level_stats:
+                level_stats[(level, diff)]['total'] += 1
+                if result['is_correct']:
+                    level_stats[(level, diff)]['correct'] += 1
+        
+        total_vocab = 0
+        for (level, diff), stats in level_stats.items():
+            if stats['total'] > 0:
+                mastery_rate = stats['correct'] / stats['total']
+                base_vocab = self.LEVEL_VOCAB_BASE.get((level, diff), 500)
+                weight = self.LEVEL_WEIGHTS.get(level, 1.0)
+                total_vocab += base_vocab * mastery_rate * weight
+        
+        return int(total_vocab)
+    
+    def evaluate_level(self, correct_count):
+        if correct_count <= 10:
+            return {'level': '入门级', 'description': '需要加强基础词汇学习'}
+        elif correct_count <= 20:
+            return {'level': '小学水平', 'description': '达到小学词汇水平'}
+        elif correct_count <= 30:
+            return {'level': '初中水平', 'description': '达到初中词汇水平'}
+        elif correct_count <= 40:
+            return {'level': '高中水平', 'description': '达到高中词汇水平'}
+        else:
+            return {'level': '优秀水平', 'description': '词汇水平优秀'}
+
+
 class SmartTestAlgorithm(TestAlgorithm):
     
     def __init__(self, db_session, user_id=None):

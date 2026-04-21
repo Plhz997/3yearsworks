@@ -33,6 +33,14 @@
               <span class="mode-desc">结合错题本，个性化出题</span>
             </div>
           </label>
+          <label class="mode-option">
+            <input type="radio" v-model="testMode" value="standard">
+            <span class="mode-icon">📊</span>
+            <div>
+              <span class="mode-title">标准测评</span>
+              <span class="mode-desc">50题标准测试，精准评估词汇量</span>
+            </div>
+          </label>
         </div>
         <p v-if="testMode === 'smart' && !isLoggedIn" class="warning">智能测评需要登录账号</p>
       </div>
@@ -89,7 +97,9 @@ const startTest = async () => {
   
   try {
     let response
-    if (testMode.value === 'smart' && isLoggedIn.value) {
+    if (testMode.value === 'standard') {
+      response = await testAPI.startStandard({})
+    } else if (testMode.value === 'smart' && isLoggedIn.value) {
       response = await testAPI.startSmart({ level: selectedLevel.value })
     } else {
       response = await testAPI.start({ level: selectedLevel.value, mode: 'basic' })
