@@ -77,59 +77,40 @@ const result = ref({
 
 const estimatedVocabulary = computed(() => {
   const analysis = result.value.analysis
+  const level = result.value.estimated_level
   
-  const levelVocabBase = {
-    '小学': 800,
-    '初中': 1500,
-    '高中': 2500
+  const levelVocabRanges = {
+    1: { min: 600, max: 1200, base: 800 },
+    2: { min: 1500, max: 3000, base: 2000 },
+    3: { min: 3000, max: 5000, base: 3500 }
   }
   
-  const levelVocabAdditional = {
-    '小学': 400,
-    '初中': 1000,
-    '高中': 2000
-  }
+  const range = levelVocabRanges[level] || levelVocabRanges[2]
+  const accuracy = analysis.overall.accuracy
   
-  let totalVocab = 0
+  const vocabRange = range.max - range.min
+  const estimated = Math.round(range.min + vocabRange * accuracy)
   
-  if (analysis.level_analysis) {
-    Object.entries(analysis.level_analysis).forEach(([levelName, stats]) => {
-      const baseVocab = levelVocabBase[levelName] || 1000
-      const additionalVocab = levelVocabAdditional[levelName] || 500
-      const accuracy = stats.correct / stats.total
-      
-      const masteredVocab = Math.round(baseVocab + additionalVocab * accuracy)
-      totalVocab += masteredVocab
-    })
-  } else {
-    const accuracy = analysis.overall.accuracy
-    totalVocab = Math.round(2000 * accuracy + 500)
-  }
-  
-  const minVocab = 200
-  const maxVocab = 5000
-  
-  return Math.max(minVocab, Math.min(maxVocab, totalVocab)).toLocaleString()
+  return Math.max(range.min * 0.5, Math.min(range.max * 1.2, estimated)).toLocaleString()
 })
 
 const vocabularyRange = computed(() => {
   const level = result.value.estimated_level
-  const accuracy = result.value.analysis.overall.accuracy
   
   const levelRanges = {
-    1: { min: 600, max: 1200 },
-    2: { min: 1200, max: 2500 },
-    3: { min: 2500, max: 4500 }
+    1: { min: 400, max: 1500 },
+    2: { min: 1200, max: 3500 },
+    3: { min: 2500, max: 5500 }
   }
   
   const range = levelRanges[level] || levelRanges[2]
-  
-  const margin = Math.round((range.max - range.min) * 0.15)
   const vocab = parseInt(estimatedVocabulary.value.replace(/,/g, ''))
   
+  const margin = Math.round(vocab * 0.1)
+  
   return {
-    low: Math.max(range.min * 0.5, vocab - margin).toLocaleString(),
-    high: Math.min(range.max * 1.2, vocab + margin).toLocaleString()
+    low: Math.max(range.min, vocab - margin).toLocaleString(),
+    high: Math.min(range.max, vocab + margin).toLocaleString()
   }
 })
 

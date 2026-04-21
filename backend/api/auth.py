@@ -56,11 +56,39 @@ def admin_login():
     return jsonify({'success': False, 'message': '用户名或密码错误'}), 401
 
 @auth_bp.route('/profile', methods=['GET'])
-@jwt_required()
 def get_profile():
-    identity = get_jwt_identity()
-    if identity.get('type') == 'user':
-        user = User.query.get(identity['user_id'])
-        if user:
-            return jsonify({'success': True, 'user': user.to_dict()}), 200
+    user_id = None
+    
+    auth_header = request.headers.get('Authorization', '')
+    if auth_header.startswith('Bearer '):
+        token = auth_header.split(' ')[1]
+        try:
+            import jwt
+            import json
+            from config.config import Config
+            decoded = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=['HS256'], options={"verify_sub": False})
+            
+            if decoded.get('sub'):
+                sub = decoded['sub']
+                if isinstance(sub, str):
+                    try:
+                        sub = json.loads(sub)
+                    except:
+                        pass
+                if isinstance(sub, dict):
+                    if sub.get('type') == 'user':
+                        user_id = sub.get('user_id')
+            
+            if not user_id and decoded.get('user_id'):
+                user_id = decoded['user_id']
+        except Exception as e:
+            print(f"Failed to parse token: {e}")
+    
+    if not user_id:
+        return jsonify({'success': False, 'message': '需要登录'}), 401
+    
+    user = User.query.get(user_id)
+    if user:
+        return jsonify({'success': True, 'user': user.to_dict()}), 200
+    
     return jsonify({'success': False, 'message': '用户未找到'}), 404

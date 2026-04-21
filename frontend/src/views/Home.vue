@@ -59,17 +59,17 @@
           <div class="level-card level-1" @click="selectLevel(1)">
             <h4>小学高频词汇</h4>
             <p>基础日常词汇，适合初学者</p>
-            <span class="word-count">约20个单词</span>
+            <span class="word-count">约60个单词</span>
           </div>
           <div class="level-card level-2" @click="selectLevel(2)">
             <h4>初中高频词汇</h4>
             <p>常用核心词汇，夯实基础</p>
-            <span class="word-count">约20个单词</span>
+            <span class="word-count">约90个单词</span>
           </div>
           <div class="level-card level-3" @click="selectLevel(3)">
             <h4>高中高频词汇</h4>
             <p>进阶词汇，提升阅读能力</p>
-            <span class="word-count">约20个单词</span>
+            <span class="word-count">约100个单词</span>
           </div>
         </div>
       </section>
