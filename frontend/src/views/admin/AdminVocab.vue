@@ -17,7 +17,13 @@
     <div class="main-content">
       <div class="header">
         <h1>词库管理</h1>
-        <button @click="showAddModal = true" class="add-btn">+ 添加单词</button>
+        <div class="header-actions">
+          <label class="upload-btn">
+            <span>📤 批量上传</span>
+            <input type="file" accept=".csv,.txt" @change="handleFileUpload" style="display: none;">
+          </label>
+          <button @click="showAddModal = true" class="add-btn">+ 添加单词</button>
+        </div>
       </div>
       
       <div class="filter-bar">
@@ -215,6 +221,36 @@ const saveWord = async () => {
   }
 }
 
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+  
+  if (!confirm(`确定要上传文件 "${file.name}" 吗？`)) {
+    event.target.value = ''
+    return
+  }
+  
+  const formData = new FormData()
+  formData.append('file', file)
+  
+  try {
+    const response = await vocabAPI.upload(formData)
+    if (response.data.success) {
+      alert(response.data.message)
+      loadVocab()
+    } else {
+      alert('上传失败：' + response.data.message)
+    }
+  } catch (error) {
+    console.error('上传失败', error)
+    const errorMsg = error.response?.data?.message || error.response?.data?.msg || error.message || '未知错误'
+    console.log('Error details:', error.response?.data)
+    alert('上传失败：' + errorMsg + '\n\n详情请查看控制台 (F12)')
+  }
+  
+  event.target.value = ''
+}
+
 const goTo = (path) => {
   router.push(path)
 }
@@ -313,6 +349,27 @@ const logout = () => {
   border: none;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.upload-btn {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
 }
 
 .filter-bar {

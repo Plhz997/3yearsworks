@@ -51,6 +51,7 @@ export const vocabAPI = {
   add: (data) => instance.post('/vocab/add', data),
   update: (id, data) => instance.put(`/vocab/${id}`, data),
   delete: (id) => instance.delete(`/vocab/${id}`),
+  upload: (formData) => instance.post('/vocab/upload', formData),
 }
 
 export const adminAPI = {
