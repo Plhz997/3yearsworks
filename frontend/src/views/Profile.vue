@@ -129,7 +129,7 @@ const logout = () => {
 <style scoped>
 .profile-container {
   min-height: 100vh;
-  background: #f5f7fa;
+  background: var(--bg-primary);
   padding: 40px 20px;
 }
 
@@ -143,31 +143,31 @@ const logout = () => {
 
 .header h2 {
   font-size: 28px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .btn-back {
   padding: 10px 20px;
-  background: white;
-  border: 2px solid #e4e7ed;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   cursor: pointer;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
   transition: all 0.3s;
 }
 
 .btn-back:hover {
-  background: #f5f7fa;
+  background: var(--btn-secondary-bg);
 }
 
 .profile-card, .stats-card, .menu-card, .action-card {
   max-width: 600px;
   margin: 0 auto 20px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .user-info {
@@ -179,7 +179,7 @@ const logout = () => {
 .avatar {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -189,24 +189,25 @@ const logout = () => {
 
 .user-details h3 {
   font-size: 24px;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
 }
 
 .user-details p {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
   margin: 0 0 4px 0;
 }
 
 .join-date {
-  color: #999 !important;
+  color: var(--text-secondary) !important;
   font-size: 12px !important;
+  opacity: 0.7;
 }
 
 .stats-card h3, .menu-card h3 {
   font-size: 18px;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 20px;
 }
 
@@ -219,7 +220,7 @@ const logout = () => {
 .stat-item {
   text-align: center;
   padding: 16px;
-  background: #f8f9fa;
+  background: var(--bg-primary);
   border-radius: 12px;
 }
 
@@ -232,13 +233,13 @@ const logout = () => {
   display: block;
   font-size: 20px;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .stat-label {
   display: block;
   font-size: 12px;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .menu-items {
@@ -252,15 +253,16 @@ const logout = () => {
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  background: #f8f9fa;
+  background: var(--bg-primary);
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s;
+  color: var(--text-primary);
 }
 
 .menu-item:hover {
-  background: #e4e7ed;
+  background: var(--border-color);
 }
 
 .menu-icon {
@@ -271,12 +273,12 @@ const logout = () => {
   flex: 1;
   text-align: left;
   padding-left: 16px;
-  color: #333;
+  color: var(--text-primary);
   font-size: 16px;
 }
 
 .menu-arrow {
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .action-card {
@@ -286,8 +288,8 @@ const logout = () => {
 .logout-btn {
   width: 100%;
   padding: 14px;
-  background: #ffebee;
-  color: #f44336;
+  background: var(--danger-bg);
+  color: var(--danger-color);
   border: none;
   border-radius: 8px;
   font-size: 16px;

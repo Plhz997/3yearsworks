@@ -7,9 +7,11 @@
           <div class="score-label">正确率</div>
         </div>
         <div class="vocab-estimate">
-          <div class="vocab-count">{{ estimatedVocabulary }}</div>
+          <div class="vocab-count">{{ (result.vocab_size || estimatedVocab).toLocaleString() }}</div>
           <div class="vocab-label">预估词汇量</div>
-          <div class="vocab-range">约 {{ vocabularyRange.low }} - {{ vocabularyRange.high }} 词</div>
+          <div class="vocab-range">
+            {{ result.vocab_range ? '约 ' + (result.vocab_range.low || 0).toLocaleString() + ' - ' + (result.vocab_range.high || 0).toLocaleString() + ' 词' : '' }}
+          </div>
         </div>
       </div>
       
@@ -19,19 +21,20 @@
           <span class="info-value level-badge" :class="`level-${result.estimated_level}`">{{ result.level_name }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">总题数</span>
-          <span class="info-value">{{ result.analysis.overall.total }}</span>
+          <span class="info-label">知识深度</span>
+          <span class="info-value depth-tag" :class="depthClass">{{ result.analysis.knowledge_depth?.level || '-' }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">正确数</span>
-          <span class="info-value correct">{{ result.analysis.overall.correct }}</span>
+          <span class="info-label">正确 / 总题</span>
+          <span class="info-value">{{ result.analysis.overall.correct }} / {{ result.analysis.overall.total }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">错误数</span>
-          <span class="info-value wrong">{{ result.analysis.overall.total - result.analysis.overall.correct }}</span>
+          <span class="info-label">加权得分</span>
+          <span class="info-value correct">{{ (result.analysis.overall.weighted_accuracy * 100).toFixed(1) }}%</span>
         </div>
       </div>
       
+      <!-- 各学段表现 -->
       <div class="level-analysis">
         <h3>各学段表现</h3>
         <div class="level-bars">
@@ -41,6 +44,27 @@
               <div class="bar-fill" :style="{ width: (stats.accuracy * 100) + '%', background: getLevelColor(stats.accuracy) }"></div>
             </div>
             <span class="bar-value">{{ Math.round(stats.accuracy * 100) }}%</span>
+            <span class="bar-detail">{{ stats.correct }}/{{ stats.total }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 新增：题型分析 -->
+      <div v-if="result.analysis.type_analysis && Object.keys(result.analysis.type_analysis).length > 0" class="type-analysis">
+        <h3>题型表现</h3>
+        <div class="type-grid">
+          <div v-for="(stats, typeName) in result.analysis.type_analysis" :key="typeName" class="type-card">
+            <div class="type-header">
+              <span class="type-name">{{ typeName }}</span>
+              <span class="type-weight" :title="'权重: ' + stats.weight">⚖️ {{ stats.weight }}</span>
+            </div>
+            <div class="type-bar-bg">
+              <div class="type-bar-fill" :style="{ width: (stats.accuracy * 100) + '%' }"></div>
+            </div>
+            <div class="type-stats">
+              <span>{{ stats.correct }}/{{ stats.total }}</span>
+              <span>{{ Math.round(stats.accuracy * 100) }}%</span>
+            </div>
           </div>
         </div>
       </div>
@@ -48,7 +72,7 @@
       <div class="suggestions">
         <h3>学习建议</h3>
         <ul>
-          <li v-for="(suggestion, index) in suggestions" :key="index">{{ suggestion }}</li>
+          <li v-for="(suggestion, index) in displaySuggestions" :key="index">{{ suggestion }}</li>
         </ul>
       </div>
       
@@ -68,74 +92,46 @@ const router = useRouter()
 
 const result = ref({
   analysis: {
-    overall: { total: 0, correct: 0, accuracy: 0 },
-    level_analysis: {}
+    overall: { total: 0, correct: 0, accuracy: 0, weighted_accuracy: 0 },
+    level_analysis: {},
+    type_analysis: {},
+    knowledge_depth: { score: 0, level: '-' },
+    suggestions: []
   },
   estimated_level: 2,
-  level_name: ''
+  level_name: '',
+  vocab_size: 0,
+  vocab_range: null
 })
 
-const estimatedVocabulary = computed(() => {
+// 仅在旧数据（后端未返回vocab_size）时使用
+const estimatedVocab = computed(() => {
   const analysis = result.value.analysis
   const level = result.value.estimated_level
-  
   const levelVocabRanges = {
-    1: { min: 600, max: 1200, base: 800 },
-    2: { min: 1500, max: 3000, base: 2000 },
-    3: { min: 3000, max: 5000, base: 3500 }
+    1: { min: 200, max: 800, base: 500 },
+    2: { min: 800, max: 2000, base: 1400 },
+    3: { min: 2000, max: 4500, base: 3200 }
   }
-  
   const range = levelVocabRanges[level] || levelVocabRanges[2]
   const accuracy = analysis.overall.accuracy
-  
-  const vocabRange = range.max - range.min
-  const estimated = Math.round(range.min + vocabRange * accuracy)
-  
-  return Math.max(range.min * 0.5, Math.min(range.max * 1.2, estimated)).toLocaleString()
+  return Math.round(range.min + (range.max - range.min) * accuracy)
 })
 
-const vocabularyRange = computed(() => {
-  const level = result.value.estimated_level
-  
-  const levelRanges = {
-    1: { min: 400, max: 1500 },
-    2: { min: 1200, max: 3500 },
-    3: { min: 2500, max: 5500 }
-  }
-  
-  const range = levelRanges[level] || levelRanges[2]
-  const vocab = parseInt(estimatedVocabulary.value.replace(/,/g, ''))
-  
-  const margin = Math.round(vocab * 0.1)
-  
-  return {
-    low: Math.max(range.min, vocab - margin).toLocaleString(),
-    high: Math.min(range.max, vocab + margin).toLocaleString()
-  }
+// 使用后端建议优先
+const displaySuggestions = computed(() => {
+  return result.value.analysis.suggestions?.length > 0
+    ? result.value.analysis.suggestions
+    : ['继续保持，你的词汇学习策略很有效！']
 })
 
-const suggestions = computed(() => {
-  const acc = result.value.analysis.overall.accuracy
-  const level = result.value.estimated_level
-  const suggestions = []
-  
-  if (acc >= 0.9) {
-    suggestions.push('🎉 表现优秀！继续保持，可以挑战更高难度')
-    if (level < 3) {
-      suggestions.push(`建议尝试${level === 1 ? '初中' : '高中'}词汇测评`)
-    }
-  } else if (acc >= 0.7) {
-    suggestions.push('👍 表现良好，还有提升空间')
-    suggestions.push('建议复习错题本中的单词')
-  } else if (acc >= 0.5) {
-    suggestions.push('💪 需要加强练习，多背单词')
-    suggestions.push('建议从较低难度开始练习')
-  } else {
-    suggestions.push('📚 需要系统学习基础词汇')
-    suggestions.push('建议每天坚持背单词')
-  }
-  
-  return suggestions
+// 知识深度对应的样式类
+const depthClass = computed(() => {
+  const level = result.value.analysis.knowledge_depth?.level || ''
+  if (level === '深度掌握') return 'depth-master'
+  if (level === '良好掌握') return 'depth-good'
+  if (level === '基础掌握') return 'depth-basic'
+  return 'depth-weak'
 })
 
 onMounted(() => {
@@ -167,7 +163,7 @@ const retest = () => {
 <style scoped>
 .result-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--bg-hero);
   padding: 40px 20px;
   display: flex;
   justify-content: center;
@@ -177,10 +173,10 @@ const retest = () => {
 .result-card {
   max-width: 600px;
   width: 100%;
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   padding: 40px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-hover);
 }
 
 .result-header {
@@ -198,9 +194,9 @@ const retest = () => {
   justify-content: center;
   width: 160px;
   height: 160px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
   border-radius: 50%;
-  color: white;
+  color: var(--text-light);
 }
 
 .score {
@@ -256,27 +252,27 @@ const retest = () => {
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  background: #f8f9fa;
+  background: var(--bg-primary);
   border-radius: 12px;
 }
 
 .info-label {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .info-value {
   font-weight: 600;
   font-size: 18px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .info-value.correct {
-  color: #4caf50;
+  color: var(--success-color);
 }
 
 .info-value.wrong {
-  color: #f44336;
+  color: var(--danger-color);
 }
 
 .level-badge {
@@ -285,16 +281,16 @@ const retest = () => {
   font-size: 14px;
 }
 
-.level-1 { background: #e8f5e9; color: #2e7d32; }
-.level-2 { background: #fff3e0; color: #e65100; }
-.level-3 { background: #fce4ec; color: #c2185b; }
+.level-1 { background: var(--level-1-bg); color: var(--level-1-color); }
+.level-2 { background: var(--level-2-bg); color: var(--level-2-color); }
+.level-3 { background: var(--level-3-bg); color: var(--level-3-color); }
 
 .level-analysis {
   margin-bottom: 32px;
 }
 
 .level-analysis h3 {
-  color: #333;
+  color: var(--text-primary);
   font-size: 18px;
   margin-bottom: 16px;
 }
@@ -314,13 +310,13 @@ const retest = () => {
 .level-name {
   width: 60px;
   font-weight: 600;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .bar-container {
   flex: 1;
   height: 24px;
-  background: #e4e7ed;
+  background: var(--border-color);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -335,18 +331,103 @@ const retest = () => {
   width: 60px;
   text-align: right;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
+
+.bar-detail {
+  width: 45px;
+  text-align: right;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ===== 题型分析 ===== */
+.type-analysis {
+  margin-bottom: 24px;
+}
+
+.type-analysis h3 {
+  color: var(--text-primary);
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.type-card {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.type-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.type-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.type-weight {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.type-bar-bg {
+  height: 8px;
+  background: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.type-bar-fill {
+  height: 100%;
+  background: var(--accent-gradient);
+  border-radius: 4px;
+  transition: width 0.5s;
+}
+
+.type-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ===== 知识深度 ===== */
+.depth-tag {
+  padding: 4px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.depth-master { background: #e8f5e9; color: #2e7d32; }
+.depth-good { background: #e3f2fd; color: #1565c0; }
+.depth-basic { background: #fff3e0; color: #e65100; }
+.depth-weak { background: #ffebee; color: #c62828; }
 
 .suggestions {
   margin-bottom: 32px;
   padding: 20px;
-  background: #fff3e0;
+  background: var(--info-bg);
   border-radius: 12px;
 }
 
 .suggestions h3 {
-  color: #e65100;
+  color: var(--info-color);
   font-size: 16px;
   margin-bottom: 12px;
 }
@@ -359,7 +440,7 @@ const retest = () => {
 
 .suggestions li {
   padding: 8px 0;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
@@ -370,8 +451,8 @@ const retest = () => {
 
 .btn-primary {
   flex: 1;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   padding: 14px;
   border: none;
   border-radius: 8px;
@@ -388,10 +469,10 @@ const retest = () => {
 
 .btn-secondary {
   flex: 1;
-  background: #f5f7fa;
-  color: #666;
+  background: var(--btn-secondary-bg);
+  color: var(--text-secondary);
   padding: 14px;
-  border: 2px solid #e4e7ed;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
@@ -400,6 +481,6 @@ const retest = () => {
 }
 
 .btn-secondary:hover {
-  background: #e4e7ed;
+  background: var(--border-color);
 }
 </style>

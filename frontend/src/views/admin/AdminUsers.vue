@@ -139,19 +139,19 @@ const logout = () => {
 .admin-container {
   min-height: 100vh;
   display: flex;
-  background: #f5f7fa;
+  background: var(--bg-primary);
 }
 
 .sidebar {
   width: 250px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: var(--bg-sidebar);
   padding: 24px;
   display: flex;
   flex-direction: column;
 }
 
 .logo h2 {
-  color: white;
+  color: var(--text-light);
   font-size: 20px;
   margin: 0 0 32px 0;
 }
@@ -167,7 +167,7 @@ const logout = () => {
   background: rgba(255, 255, 255, 0.1);
   border: none;
   border-radius: 8px;
-  color: white;
+  color: var(--text-light);
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s;
@@ -179,7 +179,7 @@ const logout = () => {
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
 }
 
 .logout-btn {
@@ -212,7 +212,7 @@ const logout = () => {
 
 .header h1 {
   font-size: 28px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .search-box {
@@ -222,25 +222,27 @@ const logout = () => {
 
 .search-box input {
   padding: 10px 16px;
-  border: 2px solid #e4e7ed;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
   width: 300px;
+  background: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .search-btn {
   padding: 10px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   border: none;
   border-radius: 8px;
   cursor: pointer;
 }
 
 .users-table {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
   overflow: hidden;
 }
 
@@ -252,19 +254,19 @@ table {
 th, td {
   padding: 16px;
   text-align: left;
-  border-bottom: 1px solid #e4e7ed;
+  border-bottom: 1px solid var(--border-color);
 }
 
 th {
-  background: #f8f9fa;
+  background: var(--table-header-bg);
   font-weight: 600;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .delete-btn {
   padding: 6px 16px;
-  background: #ffebee;
-  color: #f44336;
+  background: var(--danger-bg);
+  color: var(--danger-color);
   border: none;
   border-radius: 6px;
   font-size: 12px;
@@ -285,8 +287,8 @@ th {
 
 .page-btn {
   padding: 8px 20px;
-  background: white;
-  border: 2px solid #e4e7ed;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
   border-radius: 6px;
   cursor: pointer;
 }

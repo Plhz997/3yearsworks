@@ -118,7 +118,7 @@ const selectLevel = (level) => {
 <style scoped>
 .home-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--bg-hero);
 }
 
 .header {
@@ -131,7 +131,7 @@ const selectLevel = (level) => {
 }
 
 .logo h1 {
-  color: white;
+  color: var(--text-hero);
   font-size: 24px;
   margin: 0;
 }
@@ -152,7 +152,7 @@ const selectLevel = (level) => {
   border: none;
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.2);
-  color: white;
+  color: var(--text-hero);
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -163,7 +163,7 @@ const selectLevel = (level) => {
 
 .admin-btn {
   background: rgba(255, 255, 255, 0.9);
-  color: #667eea;
+  color: var(--accent-primary);
 }
 
 .admin-btn:hover {
@@ -182,7 +182,7 @@ const selectLevel = (level) => {
 }
 
 .hero-content h2 {
-  color: white;
+  color: var(--text-hero);
   font-size: 42px;
   margin-bottom: 16px;
 }
@@ -200,8 +200,8 @@ const selectLevel = (level) => {
 }
 
 .btn-primary {
-  background: white;
-  color: #667eea;
+  background: var(--bg-card);
+  color: var(--accent-primary);
   padding: 14px 32px;
   border-radius: 30px;
   font-size: 16px;
@@ -218,7 +218,7 @@ const selectLevel = (level) => {
 
 .btn-secondary {
   background: rgba(255, 255, 255, 0.2);
-  color: white;
+  color: var(--text-hero);
   padding: 14px 32px;
   border-radius: 30px;
   font-size: 16px;
@@ -233,16 +233,17 @@ const selectLevel = (level) => {
 }
 
 .features, .levels {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 40px;
   margin-bottom: 30px;
+  box-shadow: var(--shadow);
 }
 
 .features h3, .levels h3 {
   text-align: center;
   font-size: 28px;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 32px;
 }
 
@@ -253,7 +254,7 @@ const selectLevel = (level) => {
 }
 
 .feature-card {
-  background: #f8f9fa;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   text-align: center;
@@ -262,7 +263,7 @@ const selectLevel = (level) => {
 
 .feature-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-hover);
 }
 
 .feature-card.clickable {
@@ -270,7 +271,7 @@ const selectLevel = (level) => {
 }
 
 .feature-card.clickable:hover {
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8eaf6 100%);
+  background: var(--btn-secondary-bg);
 }
 
 .icon {
@@ -279,13 +280,13 @@ const selectLevel = (level) => {
 }
 
 .feature-card h4 {
-  color: #333;
+  color: var(--text-primary);
   font-size: 18px;
   margin-bottom: 8px;
 }
 
 .feature-card p {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -321,7 +322,7 @@ const selectLevel = (level) => {
 }
 
 .level-card h4 {
-  color: white;
+  color: var(--text-light);
   font-size: 20px;
   margin-bottom: 8px;
 }
@@ -337,7 +338,7 @@ const selectLevel = (level) => {
   background: rgba(255, 255, 255, 0.2);
   padding: 6px 16px;
   border-radius: 20px;
-  color: white;
+  color: var(--text-light);
   font-size: 12px;
 }
 

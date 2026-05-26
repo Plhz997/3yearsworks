@@ -51,7 +51,9 @@ export const vocabAPI = {
   add: (data) => instance.post('/vocab/add', data),
   update: (id, data) => instance.put(`/vocab/${id}`, data),
   delete: (id) => instance.delete(`/vocab/${id}`),
-  upload: (formData) => instance.post('/vocab/upload', formData),
+  batchDelete: (ids) => instance.post('/vocab/batch-delete', { ids }),
+  upload: (formData) => instance.post('/vocab/upload', formData, { timeout: 30000 }),
+  importParsed: (data) => instance.post('/vocab/import-parsed', data),
 }
 
 export const adminAPI = {

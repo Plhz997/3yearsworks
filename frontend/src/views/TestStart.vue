@@ -120,7 +120,7 @@ const startTest = async () => {
 <style scoped>
 .test-start-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--bg-hero);
   padding: 40px 20px;
   display: flex;
   align-items: center;
@@ -130,15 +130,15 @@ const startTest = async () => {
 .card {
   max-width: 700px;
   width: 100%;
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 48px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-hover);
 }
 
 .card h2 {
   text-align: center;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 40px;
   font-size: 32px;
   font-weight: 700;
@@ -149,12 +149,12 @@ const startTest = async () => {
 }
 
 .mode-section h3 {
-  color: #333;
+  color: var(--text-primary);
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 20px;
   padding-left: 8px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid var(--accent-primary);
 }
 
 .level-options {
@@ -168,17 +168,17 @@ const startTest = async () => {
   flex-direction: column;
   align-items: center;
   padding: 24px 16px;
-  border: 3px solid #e8eaf6;
+  border: 3px solid var(--border-color);
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  background: #fafbfc;
+  background: var(--bg-primary);
 }
 
 .level-option:hover {
-  border-color: #667eea;
+  border-color: var(--accent-primary);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+  box-shadow: var(--shadow);
 }
 
 .level-option input {
@@ -186,10 +186,10 @@ const startTest = async () => {
 }
 
 .level-option:has(input:checked) {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #f5f7ff 0%, #e8eaf6 100%);
+  border-color: var(--accent-primary);
+  background: var(--bg-primary);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+  box-shadow: var(--shadow);
 }
 
 .level-label {
@@ -202,24 +202,24 @@ const startTest = async () => {
 }
 
 .level-1 { 
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); 
-  color: #2e7d32; 
+  background: var(--level-1-bg); 
+  color: var(--level-1-color); 
   box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
 }
 .level-2 { 
-  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); 
-  color: #e65100; 
+  background: var(--level-2-bg); 
+  color: var(--level-2-color); 
   box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
 }
 .level-3 { 
-  background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); 
-  color: #c2185b; 
+  background: var(--level-3-bg); 
+  color: var(--level-3-color); 
   box-shadow: 0 2px 8px rgba(233, 30, 99, 0.2);
 }
 
 .level-desc {
   font-size: 13px;
-  color: #757575;
+  color: var(--text-secondary);
   text-align: center;
 }
 
@@ -234,17 +234,17 @@ const startTest = async () => {
   align-items: center;
   gap: 20px;
   padding: 24px;
-  border: 3px solid #e8eaf6;
+  border: 3px solid var(--border-color);
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  background: #fafbfc;
+  background: var(--bg-primary);
 }
 
 .mode-option:hover {
-  border-color: #667eea;
+  border-color: var(--accent-primary);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.15);
+  box-shadow: var(--shadow);
 }
 
 .mode-option input {
@@ -252,8 +252,8 @@ const startTest = async () => {
 }
 
 .mode-option:has(input:checked) {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #f5f7ff 0%, #e8eaf6 100%);
+  border-color: var(--accent-primary);
+  background: var(--bg-primary);
   transform: translateY(-2px);
 }
 
@@ -264,13 +264,13 @@ const startTest = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
   border-radius: 16px;
-  color: white;
+  color: var(--text-light);
 }
 
 .mode-option:has(input:checked) .mode-icon {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  background: var(--accent-gradient);
 }
 
 .mode-content {
@@ -280,7 +280,7 @@ const startTest = async () => {
 .mode-title {
   display: block;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   font-size: 16px;
   margin-bottom: 4px;
 }
@@ -288,7 +288,7 @@ const startTest = async () => {
 .mode-desc {
   display: block;
   font-size: 13px;
-  color: #757575;
+  color: var(--text-secondary);
 }
 
 .warning {
@@ -315,8 +315,8 @@ const startTest = async () => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   padding: 16px 48px;
   border: none;
   border-radius: 12px;
@@ -339,10 +339,10 @@ const startTest = async () => {
 }
 
 .btn-secondary {
-  background: white;
-  color: #667eea;
+  background: var(--btn-secondary-bg);
+  color: var(--accent-primary);
   padding: 16px 48px;
-  border: 2px solid #667eea;
+  border: 2px solid var(--accent-primary);
   border-radius: 12px;
   font-size: 18px;
   font-weight: 600;
@@ -351,7 +351,7 @@ const startTest = async () => {
 }
 
 .btn-secondary:hover {
-  background: #f5f7ff;
+  background: var(--border-color);
   transform: translateY(-2px);
 }
 
