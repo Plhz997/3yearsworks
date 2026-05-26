@@ -394,62 +394,87 @@ class TestAlgorithm:
     def calculate_vocabulary_size(self, results, target_level):
         """
         优化后的词汇量估算
-        基于题型加权和学段评估的词汇量计算
+        基于估计学段和整体正确率计算，而非跨学段求和
         
-        方法：
-        1. 先评估用户学段 (estimated_level)
-        2. 计算该学段的加权准确率
-        3. 在学段范围内线性插值估算词汇量
+        核心逻辑：
+        - 先用 estimate_level 确定用户所属学段
+        - 在该学段的词汇量范围内根据加权正确率线性插值
+        - 相邻学段的表现作为微调因子
         
         参考：
         - Nation & Beglar (2007): Vocabulary Size Test 方法论
-        - 词汇量应基于用户实际水平学段，而非跨学段累加
         """
         if not results:
             return 200 if target_level == 1 else (800 if target_level == 2 else 2000)
         
-        # 总体加权准确率
-        total_weight = 0.0
-        total_max_weight = 0.0
+        # 计算整体加权正确率
+        total_weighted = 0.0
+        max_weighted = 0.0
+        total_correct = 0
+        total = len(results)
+        
         for r in results:
-            qtype = r.get('question_type', 'choice_zh')
-            w = self._get_question_weight(qtype)
-            total_max_weight += w
+            w = self._get_question_weight(r.get('question_type', 'choice_zh'))
+            max_weighted += w
             if r['is_correct']:
-                total_weight += w
+                total_weighted += w
+                total_correct += 1
         
-        overall_weighted_acc = total_weight / total_max_weight if total_max_weight > 0 else 0
+        weighted_acc = total_weighted / max_weighted if max_weighted > 0 else 0
+        raw_acc = total_correct / total if total > 0 else 0
         
-        # 评估用户学段
+        # 用 estimate_level 确定学段
         estimated_level = self.estimate_level(results)
         
-        # 学段基准词汇量范围
-        level_ranges = {
-            1: {'min': 200, 'max': 800},
-            2: {'min': 800, 'max': 2000},
-            3: {'min': 2000, 'max': 4500}
+        # 学段对应的词汇量区间
+        level_vocab_ranges = {
+            1: {'low': 200,  'high': 800},
+            2: {'low': 800,  'high': 2000},
+            3: {'low': 2000, 'high': 4500}
         }
         
-        lr = level_ranges.get(estimated_level, level_ranges[2])
+        rng = level_vocab_ranges.get(estimated_level, level_vocab_ranges[2])
         
-        # 在学段范围内按准确率线性插值
-        # 准确率0% -> min, 准确率100% -> max
-        vocab = lr['min'] + (lr['max'] - lr['min']) * overall_weighted_acc
+        # 综合准确率：原始准确率 * 0.4 + 加权准确率 * 0.6
+        combined_acc = raw_acc * 0.4 + weighted_acc * 0.6
         
-        return int(vocab)
+        # 在该学段范围内根据准确率线性插值
+        # 准确率0% → low, 准确率100% → high
+        vocab_size = rng['low'] + (rng['high'] - rng['low']) * combined_acc
+        
+        # 邻段微调：如果高学段也有不错表现，适当上调
+        level_acc = {}
+        for r in results:
+            lv = r.get('level', 2)
+            if lv not in level_acc:
+                level_acc[lv] = {'correct': 0, 'total': 0}
+            level_acc[lv]['total'] += 1
+            if r['is_correct']:
+                level_acc[lv]['correct'] += 1
+        
+        if estimated_level < 3:
+            higher = level_acc.get(estimated_level + 1, {'correct': 0, 'total': 0})
+            if higher['total'] > 0:
+                higher_acc = higher['correct'] / higher['total']
+                # 高学段正确率≥60%时，上调当前词汇量10%-20%
+                if higher_acc >= 0.6:
+                    boost = 0.10 + (higher_acc - 0.6) * 0.25
+                    vocab_size += (rng['high'] - rng['low']) * boost
+        
+        return int(vocab_size)
     
     def estimate_vocab_range(self, vocab_size):
-        """给出词汇量范围和建议，返回 low/high 字段供前端展示"""
+        """给出词汇量范围和建议"""
         if vocab_size < 500:
-            return {'low': 200, 'high': 500, 'label': '基础入门', 'description': '建议掌握500+核心词汇'}
+            return {'low': 200, 'high': 500, 'description': '基础入门', 'next': '建议掌握500+核心词汇'}
         elif vocab_size < 1000:
-            return {'low': 500, 'high': 1000, 'label': '小学水平', 'description': '挑战1000+常用词汇'}
+            return {'low': 500, 'high': 1000, 'description': '小学水平', 'next': '挑战1000+常用词汇'}
         elif vocab_size < 2000:
-            return {'low': 1000, 'high': 2000, 'label': '初中水平', 'description': '突破2000词汇量瓶颈'}
+            return {'low': 1000, 'high': 2000, 'description': '初中水平', 'next': '突破2000词汇量瓶颈'}
         elif vocab_size < 3500:
-            return {'low': 2000, 'high': 3500, 'label': '高中水平', 'description': '向3500+进阶词汇迈进'}
+            return {'low': 2000, 'high': 3500, 'description': '高中水平', 'next': '向3500+进阶词汇迈进'}
         else:
-            return {'low': 3500, 'high': int(vocab_size * 1.1), 'label': '优秀水平', 'description': '保持并拓展专业词汇'}
+            return {'low': 3500, 'high': 5000, 'description': '优秀水平', 'next': '保持并拓展专业词汇'}
 
 
 class StandardTestAlgorithm(TestAlgorithm):
