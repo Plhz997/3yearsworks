@@ -121,6 +121,31 @@ def delete_word(word_id):
     
     return jsonify({'success': True, 'message': '删除成功'}), 200
 
+@vocab_bp.route('/batch-delete', methods=['POST'])
+@jwt_required()
+def batch_delete_words():
+    identity = get_jwt_identity()
+    if identity.get('type') != 'admin':
+        return jsonify({'success': False, 'message': '需要管理员权限'}), 403
+
+    data = request.get_json() or {}
+    ids = data.get('ids', [])
+    if not ids:
+        return jsonify({'success': False, 'message': '请选择要删除的单词'}), 400
+
+    ids = [int(word_id) for word_id in ids]
+    words = Vocabulary.query.filter(Vocabulary.id.in_(ids)).all()
+    if not words:
+        return jsonify({'success': False, 'message': '未找到要删除的单词'}), 404
+
+    Favorite.query.filter(Favorite.word_id.in_(ids)).delete(synchronize_session=False)
+    WrongWord.query.filter(WrongWord.word_id.in_(ids)).delete(synchronize_session=False)
+    for word in words:
+        db.session.delete(word)
+    db.session.commit()
+
+    return jsonify({'success': True, 'message': f'批量删除成功，共删除 {len(words)} 个单词'}), 200
+
 @vocab_bp.route('/import', methods=['POST'])
 @jwt_required()
 def import_words():
@@ -200,6 +225,9 @@ def upload_words():
     
     try:
         content = file.read().decode('utf-8')
+        default_level = request.form.get('level', 2, type=int)
+        if default_level not in [1, 2, 3]:
+            default_level = 2
         success_count = 0
         fail_count = 0
         duplicates = 0
@@ -230,7 +258,7 @@ def upload_words():
                 duplicates += 1
                 continue
             
-            level = 2
+            level = default_level
             frequency = 1
             difficulty = 1
             phonetic = ''

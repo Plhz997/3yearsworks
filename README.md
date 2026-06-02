@@ -101,6 +101,18 @@ python run.py
 
 服务将在 `http://localhost:5000` 启动。
 
+### 大模型任务匹配配置（可选）
+
+番茄伴学中的阅读理解、七选五、英语精听、影子跟读支持接入 OpenAI 兼容的大模型接口。未配置 API Key 时，系统会自动使用本地任务清单，不影响原有单词测评、错词本和后台管理功能。
+
+```bash
+export LLM_API_KEY="你的API Key"
+export LLM_API_BASE="https://api.openai.com/v1"
+export LLM_MODEL="gpt-4o-mini"
+```
+
+如果使用其他兼容 `/chat/completions` 的服务，将 `LLM_API_BASE` 和 `LLM_MODEL` 改成对应平台配置即可。
+
 ### 启动前端
 
 直接用浏览器打开 `frontend/index.html` 即可。

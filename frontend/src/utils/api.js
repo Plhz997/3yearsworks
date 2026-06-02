@@ -46,11 +46,19 @@ export const userAPI = {
   removeWrongWord: (id) => instance.delete(`/user/wrong_words/${id}`),
 }
 
+export const pomodoroAPI = {
+  groups: () => instance.get('/pomodoro/groups'),
+  start: (data) => instance.post('/pomodoro/start', data),
+  matchTask: (data) => instance.post('/pomodoro/match-task', data),
+  submit: (data) => instance.post('/pomodoro/submit', data),
+}
+
 export const vocabAPI = {
   list: (params) => instance.get('/vocab/search', { params }),
   add: (data) => instance.post('/vocab/add', data),
   update: (id, data) => instance.put(`/vocab/${id}`, data),
   delete: (id) => instance.delete(`/vocab/${id}`),
+  batchDelete: (ids) => instance.post('/vocab/batch-delete', { ids }),
   upload: (formData) => instance.post('/vocab/upload', formData),
 }
 

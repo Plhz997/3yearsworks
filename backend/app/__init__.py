@@ -26,11 +26,13 @@ def create_app():
     from api.vocabulary import vocab_bp
     from api.admin import admin_bp
     from api.user import user_bp
+    from api.pomodoro import pomodoro_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(test_bp, url_prefix='/api/test')
     app.register_blueprint(vocab_bp, url_prefix='/api/vocab')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
     app.register_blueprint(user_bp, url_prefix='/api/user')
+    app.register_blueprint(pomodoro_bp, url_prefix='/api/pomodoro')
     
     return app

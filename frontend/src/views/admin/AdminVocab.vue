@@ -18,10 +18,18 @@
       <div class="header">
         <h1>词库管理</h1>
         <div class="header-actions">
+          <select v-model="uploadLevel" class="upload-level">
+            <option value="1">上传到小学</option>
+            <option value="2">上传到初中</option>
+            <option value="3">上传到高中</option>
+          </select>
           <label class="upload-btn">
             <span>📤 批量上传</span>
             <input type="file" accept=".csv,.txt" @change="handleFileUpload" style="display: none;">
           </label>
+          <button @click="batchDeleteWords" :disabled="selectedIds.length === 0" class="batch-delete-btn">
+            批量删除 {{ selectedIds.length ? `(${selectedIds.length})` : '' }}
+          </button>
           <button @click="showAddModal = true" class="add-btn">+ 添加单词</button>
         </div>
       </div>
@@ -41,6 +49,9 @@
         <table>
           <thead>
             <tr>
+              <th>
+                <input type="checkbox" :checked="isAllSelected" @change="toggleSelectAll">
+              </th>
               <th>ID</th>
               <th>单词</th>
               <th>释义</th>
@@ -53,6 +64,9 @@
           </thead>
           <tbody>
             <tr v-for="word in vocabList" :key="word.id">
+              <td>
+                <input type="checkbox" :value="word.id" v-model="selectedIds">
+              </td>
               <td>{{ word.id }}</td>
               <td>{{ word.word }}</td>
               <td>{{ word.meaning }}</td>
@@ -117,14 +131,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { vocabAPI } from '../../utils/api'
 
 const router = useRouter()
 
 const vocabList = ref([])
+const selectedIds = ref([])
 const filterLevel = ref('')
+const uploadLevel = ref('2')
 const searchKeyword = ref('')
 const showAddModal = ref(false)
 const editingWord = ref(null)
@@ -136,6 +152,10 @@ const form = ref({
   level: '2',
   frequency: 3,
   difficulty: 3
+})
+
+const isAllSelected = computed(() => {
+  return vocabList.value.length > 0 && selectedIds.value.length === vocabList.value.length
 })
 
 onMounted(() => {
@@ -155,10 +175,15 @@ const loadVocab = async () => {
     const response = await vocabAPI.list(params)
     if (response.data.success) {
       vocabList.value = response.data.data
+      selectedIds.value = selectedIds.value.filter(id => vocabList.value.some(word => word.id === id))
     }
   } catch (error) {
     console.error('获取词库失败', error)
   }
+}
+
+const toggleSelectAll = (event) => {
+  selectedIds.value = event.target.checked ? vocabList.value.map(word => word.id) : []
 }
 
 const getLevelName = (level) => {
@@ -190,6 +215,23 @@ const deleteWord = async (id) => {
     }
   } catch (error) {
     console.error('删除失败', error)
+  }
+}
+
+const batchDeleteWords = async () => {
+  if (selectedIds.value.length === 0) return
+  if (!confirm(`确定要批量删除选中的 ${selectedIds.value.length} 个单词吗？此操作不可恢复。`)) return
+
+  try {
+    const response = await vocabAPI.batchDelete(selectedIds.value)
+    if (response.data.success) {
+      alert(response.data.message)
+      selectedIds.value = []
+      loadVocab()
+    }
+  } catch (error) {
+    const errorMsg = error.response?.data?.message || error.message || '批量删除失败'
+    alert(errorMsg)
   }
 }
 
@@ -225,13 +267,14 @@ const handleFileUpload = async (event) => {
   const file = event.target.files[0]
   if (!file) return
   
-  if (!confirm(`确定要上传文件 "${file.name}" 吗？`)) {
+  if (!confirm(`确定要上传文件 "${file.name}" 到「${getLevelName(parseInt(uploadLevel.value))}」词库吗？\n\n提示：如果文件第3列填写了学段，会优先使用文件里的学段。`)) {
     event.target.value = ''
     return
   }
   
   const formData = new FormData()
   formData.append('file', file)
+  formData.append('level', uploadLevel.value)
   
   try {
     const response = await vocabAPI.upload(formData)
@@ -356,6 +399,14 @@ const logout = () => {
   gap: 12px;
 }
 
+.upload-level {
+  padding: 10px 14px;
+  border: 2px solid #e4e7ed;
+  border-radius: 8px;
+  background: white;
+  color: #333;
+}
+
 .upload-btn {
   padding: 10px 24px;
   background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
@@ -370,6 +421,27 @@ const logout = () => {
 .upload-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+}
+
+.batch-delete-btn {
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.batch-delete-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.batch-delete-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 95, 109, 0.35);
 }
 
 .filter-bar {

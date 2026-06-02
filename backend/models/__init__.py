@@ -5,3 +5,4 @@ from models.test_record import TestRecord
 from models.test_detail import TestDetail
 from models.wrong_word import WrongWord
 from models.favorite import Favorite
+from models.pomodoro_record import PomodoroRecord

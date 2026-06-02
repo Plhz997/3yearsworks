@@ -8,6 +8,8 @@ import TestResult from '../views/TestResult.vue'
 import History from '../views/History.vue'
 import WrongWords from '../views/WrongWords.vue'
 import Profile from '../views/Profile.vue'
+import Pomodoro from '../views/Pomodoro.vue'
+import CompanionShop from '../views/CompanionShop.vue'
 import AdminLogin from '../views/admin/AdminLogin.vue'
 import AdminDashboard from '../views/admin/AdminDashboard.vue'
 import AdminUsers from '../views/admin/AdminUsers.vue'
@@ -25,6 +27,8 @@ const routes = [
   { path: '/history', name: 'History', component: History },
   { path: '/wrong-words', name: 'WrongWords', component: WrongWords },
   { path: '/profile', name: 'Profile', component: Profile },
+  { path: '/pomodoro', name: 'Pomodoro', component: Pomodoro },
+  { path: '/companion-shop', name: 'CompanionShop', component: CompanionShop },
   { path: '/admin/login', name: 'AdminLogin', component: AdminLogin },
   { path: '/admin', name: 'AdminDashboard', component: AdminDashboard },
   { path: '/admin/users', name: 'AdminUsers', component: AdminUsers },
