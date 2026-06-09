@@ -2,7 +2,8 @@ import axios from 'axios'
 
 const protocol = window.location.protocol
 const hostname = window.location.hostname
-const baseURL = `${protocol}//${hostname}:8081/api`
+const fallbackBaseURL = `${protocol}//${hostname}:8081/api`
+const baseURL = import.meta.env.VITE_API_BASE_URL || fallbackBaseURL
 
 console.log(`API base URL: ${baseURL}`)
 

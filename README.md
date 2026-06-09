@@ -167,6 +167,71 @@ python run.py
 
 如果使用其他兼容 `/chat/completions` 的服务，修改 `LLM_API_BASE` 和 `LLM_MODEL` 即可。
 
+## Render 部署
+
+建议在 Render 上建两个服务：一个 Flask 后端 Web Service，一个 Vue 前端 Static Site。
+
+### 1. 部署后端 Web Service
+
+在 Render 新建 `Web Service`，连接 GitHub 仓库。
+
+推荐配置：
+
+```text
+Root Directory: backend
+Runtime: Python 3
+Build Command: pip install -r requirements.txt
+Start Command: python run.py
+```
+
+后端环境变量：
+
+```env
+LLM_API_KEY=你的 API Key
+LLM_API_BASE=https://api.openai.com/v1
+LLM_MODEL=gpt-4o-mini
+JWT_SECRET_KEY=部署环境里换一个长随机字符串
+SECRET_KEY=部署环境里换一个长随机字符串
+```
+
+后端启动后，Render 会给你一个地址，例如：
+
+```text
+https://your-backend.onrender.com
+```
+
+前端需要使用它的 API 地址：
+
+```text
+https://your-backend.onrender.com/api
+```
+
+### 2. 部署前端 Static Site
+
+在 Render 新建 `Static Site`，连接同一个 GitHub 仓库。
+
+推荐配置：
+
+```text
+Root Directory: frontend
+Build Command: npm install && npm run build
+Publish Directory: dist
+```
+
+前端环境变量：
+
+```env
+VITE_API_BASE_URL=https://your-backend.onrender.com/api
+```
+
+把 `your-backend` 替换成你的 Render 后端服务真实域名。
+
+### 3. 部署注意事项
+
+- Render 免费服务冷启动较慢，第一次访问后端可能需要等待几十秒。
+- 当前项目默认使用 SQLite，Render 免费 Web Service 的本地磁盘不适合长期保存生产数据；如果要正式长期使用，建议后续换成 Render PostgreSQL 或其他云数据库。
+- 不要把 `backend/.env` 上传到仓库，Render 的环境变量在控制台配置即可。
+
 ## 常用 API
 
 ### 认证
