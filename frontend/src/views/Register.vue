@@ -54,22 +54,22 @@ const handleRegister = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--bg-hero);
   padding: 20px;
 }
 
 .register-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 40px;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-hover);
 }
 
 .register-card h2 {
   text-align: center;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 32px;
   font-size: 28px;
 }
@@ -81,28 +81,30 @@ const handleRegister = async () => {
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .form-group input {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e4e7ed;
+  border: 2px solid var(--input-border);
   border-radius: 8px;
   font-size: 14px;
+  background: var(--input-bg);
+  color: var(--text-primary);
   transition: all 0.3s;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--accent-primary);
 }
 
 .btn-primary {
   width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   padding: 14px;
   border: none;
   border-radius: 8px;
@@ -120,12 +122,12 @@ const handleRegister = async () => {
 .link {
   text-align: center;
   margin-top: 20px;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .link a {
-  color: #667eea;
+  color: var(--accent-primary);
   text-decoration: none;
 }
 

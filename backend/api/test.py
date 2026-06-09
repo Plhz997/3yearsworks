@@ -101,6 +101,8 @@ def submit_test():
     algorithm = TestAlgorithm(db.session)
     analysis = algorithm.analyze_results(results)
     estimated_level = algorithm.estimate_level(results)
+    vocab_size = algorithm.calculate_vocabulary_size(results, level)
+    vocab_range = algorithm.estimate_vocab_range(vocab_size)
     
     user_id = None
     
@@ -176,7 +178,9 @@ def submit_test():
         'record_id': record.id,
         'analysis': analysis,
         'estimated_level': estimated_level,
-        'level_name': algorithm.LEVEL_NAMES.get(estimated_level, '未知')
+        'level_name': algorithm.LEVEL_NAMES.get(estimated_level, '未知'),
+        'vocab_size': vocab_size,
+        'vocab_range': vocab_range
     }), 200
 
 @test_bp.route('/records', methods=['GET'])

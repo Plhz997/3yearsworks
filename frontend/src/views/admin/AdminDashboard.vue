@@ -146,19 +146,19 @@ const logout = () => {
 .admin-container {
   min-height: 100vh;
   display: flex;
-  background: #f5f7fa;
+  background: var(--bg-primary);
 }
 
 .sidebar {
   width: 250px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: var(--bg-sidebar);
   padding: 24px;
   display: flex;
   flex-direction: column;
 }
 
 .logo h2 {
-  color: white;
+  color: var(--text-light);
   font-size: 20px;
   margin: 0 0 32px 0;
 }
@@ -174,7 +174,7 @@ const logout = () => {
   background: rgba(255, 255, 255, 0.1);
   border: none;
   border-radius: 8px;
-  color: white;
+  color: var(--text-light);
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s;
@@ -186,7 +186,7 @@ const logout = () => {
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
 }
 
 .logout-btn {
@@ -219,11 +219,11 @@ const logout = () => {
 
 .header h1 {
   font-size: 28px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .admin-name {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
@@ -235,13 +235,13 @@ const logout = () => {
 }
 
 .stat-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 24px;
   display: flex;
   align-items: center;
   gap: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .stat-icon {
@@ -254,34 +254,34 @@ const logout = () => {
   font-size: 28px;
 }
 
-.users-icon { background: #e3f2fd; }
-.vocab-icon { background: #e8f5e9; }
+.users-icon { background: var(--info-bg); }
+.vocab-icon { background: var(--success-bg); }
 .test-icon { background: #fff3e0; }
 
 .stat-value {
   display: block;
   font-size: 28px;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .stat-label {
   display: block;
   font-size: 14px;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .level-distribution, .recent-tests {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .level-distribution h3, .recent-tests h3 {
   font-size: 18px;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 20px;
 }
 
@@ -300,13 +300,13 @@ const logout = () => {
 .level-name {
   width: 60px;
   font-weight: 600;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .bar-container {
   flex: 1;
   height: 24px;
-  background: #e4e7ed;
+  background: var(--border-color);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -325,7 +325,7 @@ const logout = () => {
   width: 60px;
   text-align: right;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 table {
@@ -336,13 +336,13 @@ table {
 th, td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #e4e7ed;
+  border-bottom: 1px solid var(--border-color);
 }
 
 th {
-  background: #f8f9fa;
+  background: var(--table-header-bg);
   font-weight: 600;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .level-badge {
@@ -352,7 +352,7 @@ th {
   font-weight: 600;
 }
 
-.level-1 { background: #e8f5e9; color: #2e7d32; }
-.level-2 { background: #fff3e0; color: #e65100; }
-.level-3 { background: #fce4ec; color: #c2185b; }
+.level-1 { background: var(--level-1-bg); color: var(--level-1-color); }
+.level-2 { background: var(--level-2-bg); color: var(--level-2-color); }
+.level-3 { background: var(--level-3-bg); color: var(--level-3-color); }
 </style>

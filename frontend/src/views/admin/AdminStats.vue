@@ -92,19 +92,19 @@ const logout = () => {
 .admin-container {
   min-height: 100vh;
   display: flex;
-  background: #f5f7fa;
+  background: var(--bg-primary);
 }
 
 .sidebar {
   width: 250px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: var(--bg-sidebar);
   padding: 24px;
   display: flex;
   flex-direction: column;
 }
 
 .logo h2 {
-  color: white;
+  color: var(--text-light);
   font-size: 20px;
   margin: 0 0 32px 0;
 }
@@ -120,7 +120,7 @@ const logout = () => {
   background: rgba(255, 255, 255, 0.1);
   border: none;
   border-radius: 8px;
-  color: white;
+  color: var(--text-light);
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s;
@@ -132,7 +132,7 @@ const logout = () => {
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
 }
 
 .logout-btn {
@@ -162,7 +162,7 @@ const logout = () => {
 
 .header h1 {
   font-size: 28px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .stats-overview {
@@ -173,36 +173,36 @@ const logout = () => {
 }
 
 .stat-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 24px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .stat-value {
   font-size: 36px;
   font-weight: 700;
-  color: #667eea;
+  color: var(--accent-primary);
 }
 
 .stat-label {
   font-size: 14px;
-  color: #999;
+  color: var(--text-secondary);
   margin-top: 8px;
 }
 
 .chart-section {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .chart-section h3 {
   font-size: 18px;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 20px;
 }
 

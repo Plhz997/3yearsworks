@@ -132,7 +132,7 @@ const closeDetail = () => {
 <style scoped>
 .history-container {
   min-height: 100vh;
-  background: #f5f7fa;
+  background: var(--bg-primary);
   padding: 40px 20px;
 }
 
@@ -146,22 +146,22 @@ const closeDetail = () => {
 
 .header h2 {
   font-size: 28px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .btn-back {
   padding: 10px 20px;
-  background: white;
-  border: 2px solid #e4e7ed;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   cursor: pointer;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
   transition: all 0.3s;
 }
 
 .btn-back:hover {
-  background: #f5f7fa;
+  background: var(--btn-secondary-bg);
 }
 
 .empty-state {
@@ -169,9 +169,9 @@ const closeDetail = () => {
   margin: 0 auto;
   text-align: center;
   padding: 60px 40px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .empty-icon {
@@ -180,14 +180,14 @@ const closeDetail = () => {
 }
 
 .empty-state p {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 16px;
   margin-bottom: 24px;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   padding: 12px 32px;
   border: none;
   border-radius: 8px;
@@ -211,10 +211,10 @@ const closeDetail = () => {
 }
 
 .record-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .record-header {
@@ -231,12 +231,12 @@ const closeDetail = () => {
   font-weight: 600;
 }
 
-.level-1 { background: #e8f5e9; color: #2e7d32; }
-.level-2 { background: #fff3e0; color: #e65100; }
-.level-3 { background: #fce4ec; color: #c2185b; }
+.level-1 { background: var(--level-1-bg); color: var(--level-1-color); }
+.level-2 { background: var(--level-2-bg); color: var(--level-2-color); }
+.level-3 { background: var(--level-3-bg); color: var(--level-3-color); }
 
 .record-header .date {
-  color: #999;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
@@ -254,16 +254,16 @@ const closeDetail = () => {
 .stat-value {
   font-size: 24px;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .stat-value.correct {
-  color: #4caf50;
+  color: var(--success-color);
 }
 
 .stat-label {
   font-size: 12px;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .record-footer {
@@ -272,17 +272,17 @@ const closeDetail = () => {
 
 .btn-detail {
   padding: 8px 20px;
-  background: #f5f7fa;
+  background: var(--btn-secondary-bg);
   border: none;
   border-radius: 6px;
-  color: #667eea;
+  color: var(--accent-primary);
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s;
 }
 
 .btn-detail:hover {
-  background: #e8eaf6;
+  background: var(--border-color);
 }
 
 .detail-modal {
@@ -291,7 +291,7 @@ const closeDetail = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--modal-overlay);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -299,7 +299,7 @@ const closeDetail = () => {
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   width: 100%;
   max-width: 600px;
@@ -312,12 +312,12 @@ const closeDetail = () => {
   justify-content: space-between;
   align-items: center;
   padding: 24px;
-  border-bottom: 1px solid #e4e7ed;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .modal-header h3 {
   font-size: 20px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .close-btn {
@@ -325,7 +325,7 @@ const closeDetail = () => {
   background: none;
   border: none;
   cursor: pointer;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .modal-body {
@@ -345,25 +345,25 @@ const closeDetail = () => {
 
 .summary-label {
   font-size: 14px;
-  color: #999;
+  color: var(--text-secondary);
   margin-bottom: 8px;
 }
 
 .summary-value {
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .detail-questions h4 {
   font-size: 16px;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 16px;
 }
 
 .question-detail {
   padding: 16px;
-  background: #f8f9fa;
+  background: var(--bg-primary);
   border-radius: 8px;
   margin-bottom: 12px;
 }
@@ -377,23 +377,23 @@ const closeDetail = () => {
 
 .question-num {
   font-size: 12px;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .correct-tag {
-  color: #4caf50;
+  color: var(--success-color);
   font-size: 12px;
   font-weight: 600;
 }
 
 .wrong-tag {
-  color: #f44336;
+  color: var(--danger-color);
   font-size: 12px;
   font-weight: 600;
 }
 
 .user-answer {
-  color: #f44336;
+  color: var(--danger-color);
   font-size: 14px;
   margin-top: 8px;
 }

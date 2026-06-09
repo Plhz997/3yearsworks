@@ -84,7 +84,7 @@ const removeWord = async (wordId) => {
 <style scoped>
 .wrong-words-container {
   min-height: 100vh;
-  background: #f5f7fa;
+  background: var(--bg-primary);
   padding: 40px 20px;
 }
 
@@ -98,22 +98,22 @@ const removeWord = async (wordId) => {
 
 .header h2 {
   font-size: 28px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .btn-back {
   padding: 10px 20px;
-  background: white;
-  border: 2px solid #e4e7ed;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   cursor: pointer;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
   transition: all 0.3s;
 }
 
 .btn-back:hover {
-  background: #f5f7fa;
+  background: var(--btn-secondary-bg);
 }
 
 .empty-state {
@@ -121,9 +121,9 @@ const removeWord = async (wordId) => {
   margin: 0 auto;
   text-align: center;
   padding: 60px 40px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .empty-icon {
@@ -132,7 +132,7 @@ const removeWord = async (wordId) => {
 }
 
 .empty-state p {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 16px;
 }
 
@@ -145,10 +145,10 @@ const removeWord = async (wordId) => {
 }
 
 .word-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -167,7 +167,7 @@ const removeWord = async (wordId) => {
 
 .word-header h3 {
   font-size: 20px;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -178,24 +178,24 @@ const removeWord = async (wordId) => {
   font-weight: 600;
 }
 
-.level-1 { background: #e8f5e9; color: #2e7d32; }
-.level-2 { background: #fff3e0; color: #e65100; }
-.level-3 { background: #fce4ec; color: #c2185b; }
+.level-1 { background: var(--level-1-bg); color: var(--level-1-color); }
+.level-2 { background: var(--level-2-bg); color: var(--level-2-color); }
+.level-3 { background: var(--level-3-bg); color: var(--level-3-color); }
 
 .meaning {
-  color: #333;
+  color: var(--text-primary);
   font-size: 16px;
   margin: 0 0 8px 0;
 }
 
 .phonetic {
-  color: #999;
+  color: var(--text-secondary);
   font-size: 14px;
   margin: 0 0 8px 0;
 }
 
 .example {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
   font-style: italic;
   margin: 0 0 12px 0;
@@ -208,7 +208,7 @@ const removeWord = async (wordId) => {
 
 .wrong-count, .last-wrong {
   font-size: 12px;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .word-actions {
@@ -227,8 +227,8 @@ const removeWord = async (wordId) => {
 }
 
 .remove-btn {
-  background: #ffebee;
-  color: #f44336;
+  background: var(--danger-bg);
+  color: var(--danger-color);
 }
 
 .remove-btn:hover {

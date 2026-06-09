@@ -13,11 +13,22 @@
     <div v-if="currentQuestion" class="question-card">
       <div class="question-header">
         <span class="question-type">{{ getQuestionTypeName(currentQuestion.question_type) }}</span>
+        <div class="countdown-bar-wrapper">
+          <div class="countdown-bar" :style="formatTimerBar"></div>
+        </div>
+        <span class="countdown-text" :class="{ 'countdown-warn': questionTime <= 3 }">
+          ⏳ {{ questionTime }}s
+        </span>
         <span class="level-badge" :class="`level-${currentQuestion.level}`">{{ getLevelName(currentQuestion.level) }}</span>
       </div>
       
       <div class="question-content">
-        <h3>{{ currentQuestion.prompt }}</h3>
+        <h3>
+          {{ currentQuestion.prompt }}
+          <button @click="speakWord(currentQuestion.word)" class="speak-btn" title="点击朗读单词">
+            🔊
+          </button>
+        </h3>
         
         <div v-if="currentQuestion.phonetic" class="phonetic">{{ currentQuestion.phonetic }}</div>
         
@@ -86,9 +97,20 @@ const showResult = ref(false)
 const isCorrect = ref(false)
 const results = ref([])
 const elapsedTime = ref(0)
+const questionTime = ref(0)
+const questionTimeLimit = ref(10)
 const consecutiveWrong = ref(0)
 const totalWrong = ref(0)
 let timer = null
+let questionTimer = null
+
+// 题型限时（秒）
+const TIME_LIMITS = {
+  spelling: 20,
+  choice_en: 10,
+  choice_zh: 10,
+  recognition: 5
+}
 
 const progressPercent = computed(() => ((currentIndex.value + 1) / questions.value.length) * 100)
 
@@ -108,10 +130,20 @@ onMounted(() => {
   }, 1000)
   
   window.addEventListener('keydown', handleKeydown)
+  
+  startQuestionTimer()
+  
+  // 自动朗读第一个单词
+  setTimeout(() => {
+    if (currentQuestion.value) {
+      speakWord(currentQuestion.value.word)
+    }
+  }, 500)
 })
 
 onUnmounted(() => {
   if (timer) clearInterval(timer)
+  if (questionTimer) clearInterval(questionTimer)
   window.removeEventListener('keydown', handleKeydown)
 })
 
@@ -132,6 +164,53 @@ const formatTime = (seconds) => {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
 }
 
+const speakWord = (text) => {
+  if (!text || !window.speechSynthesis) return
+  window.speechSynthesis.cancel()
+  const utterance = new SpeechSynthesisUtterance(text)
+  utterance.lang = 'en-US'
+  utterance.rate = 0.85
+  utterance.pitch = 1.0
+  window.speechSynthesis.speak(utterance)
+}
+
+const startQuestionTimer = () => {
+  if (!currentQuestion.value) return
+  const qtype = currentQuestion.value.question_type
+  questionTimeLimit.value = TIME_LIMITS[qtype] || 10
+  questionTime.value = questionTimeLimit.value
+  
+  if (questionTimer) clearInterval(questionTimer)
+  questionTimer = setInterval(() => {
+    questionTime.value--
+    if (questionTime.value <= 0) {
+      clearInterval(questionTimer)
+      if (!showResult.value) {
+        // 超时 - 自动提交为错
+        const qtype = currentQuestion.value.question_type
+        if (qtype === 'recognition') {
+          userAnswer.value = 'no'
+        } else if (!userAnswer.value) {
+          userAnswer.value = 'timeout'
+        }
+        submitAnswer()
+      }
+    }
+  }, 1000)
+}
+
+const stopQuestionTimer = () => {
+  if (questionTimer) {
+    clearInterval(questionTimer)
+    questionTimer = null
+  }
+}
+
+const formatTimerBar = computed(() => {
+  const pct = (questionTime.value / questionTimeLimit.value) * 100
+  return { width: pct + '%', background: questionTime.value <= 3 ? 'var(--danger-color)' : questionTime.value <= 5 ? '#ff9800' : 'var(--accent-primary)' }
+})
+
 const getQuestionTypeName = (type) => {
   const types = {
     choice_en: '看中文选英文',
@@ -149,10 +228,23 @@ const getLevelName = (level) => {
 
 const selectOption = (key) => {
   userAnswer.value = key
+  // 选择题和认识题：选择后自动提交
+  const qtype = currentQuestion.value.question_type
+  if (qtype !== 'spelling') {
+    submitAnswer()
+    // 显示结果后自动跳转下一题
+    setTimeout(() => {
+      if (showResult.value) {
+        nextQuestion()
+      }
+    }, 800)
+  }
 }
 
 const submitAnswer = () => {
   if (!userAnswer.value) return
+  
+  stopQuestionTimer()
   
   const correctOption = currentQuestion.value.options?.find(o => o.correct)
   const correctKey = correctOption?.key || currentQuestion.value.word
@@ -209,6 +301,8 @@ const nextQuestion = async () => {
     currentIndex.value++
     userAnswer.value = ''
     showResult.value = false
+    setTimeout(() => speakWord(currentQuestion.value.word), 300)
+    startQuestionTimer()
   } else {
     await submitTest()
   }
@@ -238,7 +332,7 @@ const submitTest = async () => {
 <style scoped>
 .test-container {
   min-height: 100vh;
-  background: #f5f7fa;
+  background: var(--bg-primary);
   padding: 40px 20px;
 }
 
@@ -252,13 +346,13 @@ const submitTest = async () => {
 
 .progress span {
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .progress-bar {
   width: 300px;
   height: 8px;
-  background: #e4e7ed;
+  background: var(--border-color);
   border-radius: 4px;
   margin-top: 8px;
   overflow: hidden;
@@ -266,7 +360,7 @@ const submitTest = async () => {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-gradient);
   border-radius: 4px;
   transition: width 0.3s;
 }
@@ -274,16 +368,16 @@ const submitTest = async () => {
 .timer {
   font-size: 18px;
   font-weight: 600;
-  color: #667eea;
+  color: var(--accent-primary);
 }
 
 .question-card {
   max-width: 800px;
   margin: 0 auto;
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .question-header {
@@ -291,14 +385,49 @@ const submitTest = async () => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .question-type {
-  background: #667eea;
-  color: white;
+  background: var(--accent-primary);
+  color: var(--text-light);
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 14px;
+}
+
+.countdown-bar-wrapper {
+  flex: 1;
+  max-width: 200px;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.countdown-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s linear, background 0.3s;
+}
+
+.countdown-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 45px;
+  text-align: center;
+}
+
+.countdown-warn {
+  color: var(--danger-color);
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 1; }
+  to { opacity: 0.5; }
 }
 
 .level-badge {
@@ -307,20 +436,49 @@ const submitTest = async () => {
   font-size: 14px;
 }
 
-.level-1 { background: #e8f5e9; color: #2e7d32; }
-.level-2 { background: #fff3e0; color: #e65100; }
-.level-3 { background: #fce4ec; color: #c2185b; }
+.level-1 { background: var(--level-1-bg); color: var(--level-1-color); }
+.level-2 { background: var(--level-2-bg); color: var(--level-2-color); }
+.level-3 { background: var(--level-3-bg); color: var(--level-3-color); }
 
 .question-content h3 {
   font-size: 24px;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 24px;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.speak-btn {
+  background: var(--info-bg);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+.speak-btn:hover {
+  background: var(--info-color);
+  color: white;
+  transform: scale(1.1);
+}
+
+.speak-btn:active {
+  transform: scale(0.95);
 }
 
 .phonetic {
   text-align: center;
-  color: #999;
+  color: var(--text-secondary);
   font-size: 16px;
   margin-bottom: 24px;
 }
@@ -330,14 +488,16 @@ const submitTest = async () => {
   padding: 16px;
   font-size: 20px;
   text-align: center;
-  border: 2px solid #e4e7ed;
+  border: 2px solid var(--border-color);
   border-radius: 12px;
   outline: none;
+  background: var(--input-bg);
+  color: var(--text-primary);
   transition: all 0.3s;
 }
 
 .spelling-input input:focus {
-  border-color: #667eea;
+  border-color: var(--accent-primary);
 }
 
 .recognition-options {
@@ -350,21 +510,22 @@ const submitTest = async () => {
   padding: 20px 60px;
   font-size: 18px;
   font-weight: 600;
-  border: 2px solid #e4e7ed;
+  border: 2px solid var(--border-color);
   border-radius: 12px;
-  background: white;
+  background: var(--bg-card);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.3s;
 }
 
 .recognition-btn:hover {
-  border-color: #667eea;
+  border-color: var(--accent-primary);
 }
 
 .recognition-btn.selected {
-  background: #667eea;
-  color: white;
-  border-color: #667eea;
+  background: var(--accent-primary);
+  color: var(--text-light);
+  border-color: var(--accent-primary);
 }
 
 .options {
@@ -379,32 +540,33 @@ const submitTest = async () => {
   gap: 16px;
   padding: 20px;
   font-size: 18px;
-  border: 2px solid #e4e7ed;
+  border: 2px solid var(--border-color);
   border-radius: 12px;
-  background: white;
+  background: var(--bg-card);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.3s;
 }
 
 .option-btn:hover {
-  border-color: #667eea;
+  border-color: var(--accent-primary);
 }
 
 .option-btn.selected {
-  border-color: #667eea;
-  background: #f5f7ff;
+  border-color: var(--accent-primary);
+  background: var(--btn-secondary-bg);
 }
 
 .option-btn.correct {
-  background: #e8f5e9;
+  background: var(--success-bg);
   border-color: #4caf50;
-  color: #2e7d32;
+  color: var(--success-color);
 }
 
 .option-btn.wrong {
-  background: #ffebee;
-  border-color: #f44336;
-  color: #c62828;
+  background: var(--danger-bg);
+  border-color: var(--danger-color);
+  color: var(--danger-color);
 }
 
 .option-index {
@@ -413,10 +575,10 @@ const submitTest = async () => {
   justify-content: center;
   width: 36px;
   height: 36px;
-  background: #f5f7fa;
+  background: var(--btn-secondary-bg);
   border-radius: 50%;
   font-weight: 600;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .result-hint {
@@ -427,15 +589,15 @@ const submitTest = async () => {
 }
 
 .correct-hint {
-  color: #4caf50;
+  color: var(--success-color);
 }
 
 .wrong-hint {
-  color: #f44336;
+  color: var(--danger-color);
 }
 
 .unknown-hint {
-  color: #2196f3;
+  color: var(--info-color);
 }
 
 .question-footer {
@@ -444,8 +606,8 @@ const submitTest = async () => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   padding: 14px 48px;
   border: none;
   border-radius: 8px;

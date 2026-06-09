@@ -1,0 +1,312 @@
+/* ============================================
+   词汇测评系统 - 主题皮肤系统
+   ============================================ */
+
+/* 默认经典蓝紫 */
+:root,
+[data-theme="classic"] {
+  --bg-primary: #f5f7fa;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-hero: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --bg-sidebar: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-light: #ffffff;
+  --text-hero: #ffffff;
+  --accent-primary: #667eea;
+  --accent-secondary: #764ba2;
+  --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --btn-primary-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #f5f7fa;
+  --btn-secondary-text: #333333;
+  --border-color: #e4e7ed;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --level-1-bg: #e8f5e9;
+  --level-1-color: #2e7d32;
+  --level-2-bg: #fff3e0;
+  --level-2-color: #e65100;
+  --level-3-bg: #fce4ec;
+  --level-3-color: #c2185b;
+  --danger-bg: #ffebee;
+  --danger-color: #f44336;
+  --success-bg: #e8f5e9;
+  --success-color: #2e7d32;
+  --info-bg: #e3f2fd;
+  --info-color: #1976d2;
+  --nav-bg: rgba(255, 255, 255, 0.95);
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --table-header-bg: #f8f9fa;
+  --table-header-text: #666666;
+  --input-bg: #ffffff;
+  --input-border: #e4e7ed;
+}
+
+/* 自然森林 */
+[data-theme="forest"] {
+  --bg-primary: #f0faf5;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-hero: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  --bg-sidebar: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+  --text-primary: #2d3436;
+  --text-secondary: #636e72;
+  --text-light: #ffffff;
+  --text-hero: #ffffff;
+  --accent-primary: #11998e;
+  --accent-secondary: #38ef7d;
+  --accent-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  --btn-primary-bg: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #e8f5e9;
+  --btn-secondary-text: #2d3436;
+  --border-color: #b7e4c7;
+  --shadow: 0 4px 12px rgba(17, 153, 142, 0.1);
+  --shadow-hover: 0 8px 24px rgba(17, 153, 142, 0.2);
+  --level-1-bg: #e8f5e9;
+  --level-1-color: #2e7d32;
+  --level-2-bg: #fff8e1;
+  --level-2-color: #f57f17;
+  --level-3-bg: #fce4ec;
+  --level-3-color: #ad1457;
+  --danger-bg: #ffebee;
+  --danger-color: #c62828;
+  --success-bg: #e8f5e9;
+  --success-color: #1b5e20;
+  --info-bg: #e0f2f1;
+  --info-color: #00695c;
+  --nav-bg: rgba(255, 255, 255, 0.95);
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --table-header-bg: #e8f5e9;
+  --table-header-text: #2d3436;
+  --input-bg: #ffffff;
+  --input-border: #b7e4c7;
+}
+
+/* 日落暖橙 */
+[data-theme="sunset"] {
+  --bg-primary: #fffaf5;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-hero: linear-gradient(135deg, #f12711 0%, #f5af19 100%);
+  --bg-sidebar: linear-gradient(135deg, #7f4f24 0%, #936639 100%);
+  --text-primary: #3e2723;
+  --text-secondary: #795548;
+  --text-light: #ffffff;
+  --text-hero: #ffffff;
+  --accent-primary: #f12711;
+  --accent-secondary: #f5af19;
+  --accent-gradient: linear-gradient(135deg, #f12711 0%, #f5af19 100%);
+  --btn-primary-bg: linear-gradient(135deg, #f12711 0%, #f5af19 100%);
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #fff3e0;
+  --btn-secondary-text: #3e2723;
+  --border-color: #ffe0b2;
+  --shadow: 0 4px 12px rgba(241, 39, 17, 0.1);
+  --shadow-hover: 0 8px 24px rgba(241, 39, 17, 0.2);
+  --level-1-bg: #fff3e0;
+  --level-1-color: #e65100;
+  --level-2-bg: #fce4ec;
+  --level-2-color: #c62828;
+  --level-3-bg: #ede7f6;
+  --level-3-color: #4527a0;
+  --danger-bg: #ffebee;
+  --danger-color: #d32f2f;
+  --success-bg: #e8f5e9;
+  --success-color: #2e7d32;
+  --info-bg: #fff8e1;
+  --info-color: #e65100;
+  --nav-bg: rgba(255, 255, 255, 0.95);
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --table-header-bg: #fff3e0;
+  --table-header-text: #3e2723;
+  --input-bg: #ffffff;
+  --input-border: #ffe0b2;
+}
+
+/* 暗夜模式 */
+[data-theme="midnight"] {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #2d2d2d;
+  --bg-hero: linear-gradient(135deg, #6200ea 0%, #03dac6 100%);
+  --bg-sidebar: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  --text-primary: #e0e0e0;
+  --text-secondary: #9e9e9e;
+  --text-light: #ffffff;
+  --text-hero: #ffffff;
+  --accent-primary: #bb86fc;
+  --accent-secondary: #03dac6;
+  --accent-gradient: linear-gradient(135deg, #bb86fc 0%, #03dac6 100%);
+  --btn-primary-bg: linear-gradient(135deg, #bb86fc 0%, #03dac6 100%);
+  --btn-primary-text: #121212;
+  --btn-secondary-bg: #333333;
+  --btn-secondary-text: #e0e0e0;
+  --border-color: #333333;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --level-1-bg: #1b5e20;
+  --level-1-color: #a5d6a7;
+  --level-2-bg: #e65100;
+  --level-2-color: #ffcc80;
+  --level-3-bg: #880e4f;
+  --level-3-color: #f48fb1;
+  --danger-bg: #b71c1c;
+  --danger-color: #ef9a9a;
+  --success-bg: #1b5e20;
+  --success-color: #a5d6a7;
+  --info-bg: #1a237e;
+  --info-color: #90caf9;
+  --nav-bg: rgba(30, 30, 30, 0.98);
+  --modal-overlay: rgba(0, 0, 0, 0.7);
+  --table-header-bg: #333333;
+  --table-header-text: #9e9e9e;
+  --input-bg: #2d2d2d;
+  --input-border: #444444;
+}
+
+/* 梦幻樱花 */
+[data-theme="sakura"] {
+  --bg-primary: #fff5f8;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-hero: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --bg-sidebar: linear-gradient(135deg, #880e4f 0%, #c2185b 100%);
+  --text-primary: #4a154b;
+  --text-secondary: #8e6f8e;
+  --text-light: #ffffff;
+  --text-hero: #ffffff;
+  --accent-primary: #f093fb;
+  --accent-secondary: #f5576c;
+  --accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --btn-primary-bg: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #fce4ec;
+  --btn-secondary-text: #4a154b;
+  --border-color: #f8bbd0;
+  --shadow: 0 4px 12px rgba(244, 143, 177, 0.15);
+  --shadow-hover: 0 8px 24px rgba(244, 143, 177, 0.25);
+  --level-1-bg: #fce4ec;
+  --level-1-color: #c2185b;
+  --level-2-bg: #f3e5f5;
+  --level-2-color: #6a1b9a;
+  --level-3-bg: #e8eaf6;
+  --level-3-color: #283593;
+  --danger-bg: #ffebee;
+  --danger-color: #c62828;
+  --success-bg: #e8f5e9;
+  --success-color: #2e7d32;
+  --info-bg: #e3f2fd;
+  --info-color: #1565c0;
+  --nav-bg: rgba(255, 255, 255, 0.95);
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --table-header-bg: #fce4ec;
+  --table-header-text: #4a154b;
+  --input-bg: #ffffff;
+  --input-border: #f8bbd0;
+}
+
+/* 海洋主题 */
+[data-theme="ocean"] {
+  --bg-primary: #f0f8ff;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-hero: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+  --bg-sidebar: linear-gradient(135deg, #023e8a 0%, #0077b6 100%);
+  --text-primary: #1a3a5c;
+  --text-secondary: #5c7a99;
+  --text-light: #ffffff;
+  --text-hero: #ffffff;
+  --accent-primary: #0077b6;
+  --accent-secondary: #00b4d8;
+  --accent-gradient: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+  --btn-primary-bg: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #e0f0ff;
+  --btn-secondary-text: #1a3a5c;
+  --border-color: #b8d8f0;
+  --shadow: 0 4px 12px rgba(0, 119, 182, 0.1);
+  --shadow-hover: 0 8px 24px rgba(0, 119, 182, 0.2);
+  --level-1-bg: #e0f0ff;
+  --level-1-color: #023e8a;
+  --level-2-bg: #fff3e0;
+  --level-2-color: #e65100;
+  --level-3-bg: #fce4ec;
+  --level-3-color: #880e4f;
+  --danger-bg: #ffebee;
+  --danger-color: #c62828;
+  --success-bg: #e8f5e9;
+  --success-color: #1b5e20;
+  --info-bg: #e0f0ff;
+  --info-color: #023e8a;
+  --nav-bg: rgba(255, 255, 255, 0.95);
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --table-header-bg: #e0f0ff;
+  --table-header-text: #1a3a5c;
+  --input-bg: #ffffff;
+  --input-border: #b8d8f0;
+}
+
+/* 通用过渡效果 */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* 全局表单元素 */
+input, select, textarea {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--input-border);
+}
+
+/* 全局按钮 */
+button {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: none;
+}
+
+/* 全局卡片 */
+.card, [class*="card"] {
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+}
+
+/* 全局表格 */
+table {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+th {
+  background: var(--table-header-bg);
+  color: var(--table-header-text);
+}
+
+td {
+  border-color: var(--border-color);
+}
+
+/* 侧边栏通用样式 */
+[class*="sidebar"], [class*="side-bar"] {
+  background: var(--bg-sidebar);
+}
+
+/* 导航栏 */
+[class*="navbar"], [class*="nav-bar"] {
+  background: var(--nav-bg);
+}
+
+/* 模态框 */
+[class*="modal"] {
+  background: var(--bg-card);
+  box-shadow: var(--shadow-hover);
+}
